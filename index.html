@@ -514,8 +514,13 @@
   /* grid */
   .pf-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    .pf-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .pf-page-inner { padding: 1.5rem 1rem 3rem; }
+    .pf-page-hero h1 { font-size: 2rem; }
   }
   .pf-card {
     background: rgba(255,255,255,0.04);
@@ -531,10 +536,13 @@
   .pf-card-media {
     width: 100%; aspect-ratio: 16/9;
     background: #050e1c; position: relative;
+    overflow: hidden;
   }
   .pf-card-media video,
   .pf-card-media img   { width:100%; height:100%; object-fit:cover; display:block; }
   .pf-card-media iframe { width:100%; height:100%; border:none; display:block; }
+  /* Delete button stays above iframe */
+  .pf-card-del { z-index: 10; }
   .pf-card-info { padding: 0.9rem 1.1rem; }
   .pf-card-title { color:#fff; font-weight:600; font-size:0.95rem; margin-bottom:0.25rem; }
   .pf-card-desc  { color:rgba(255,255,255,0.42); font-size:0.82rem; }
@@ -1185,26 +1193,25 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 // ══════════════════════════════════════════
 // PORTFOLIO FULL-PAGE SYSTEM
 // ══════════════════════════════════════════
-const ADMIN_PASS = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
-const DB_NAME    = 'PortfolioDB';
-const DB_VERSION = 1;
-const STORE_META = 'pf_meta';   // title, desc, type, id — small data
-const STORE_BLOB = 'pf_blobs';  // actual video/image binary data
+const ADMIN_PASS    = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
+const SHARED_KEY    = 'pf_youtube_items';   // shared across all devices via window.storage
+const LOCAL_KEY     = 'pf_local_items';     // local-only blobs (IndexedDB)
+const DB_NAME       = 'PortfolioDB';
+const DB_VERSION    = 1;
+const STORE_BLOB    = 'pf_blobs';
 
-let pfItems      = [];
+let pfItems      = [];   // all items merged (youtube shared + local blobs)
 let pfIsAdmin    = false;
 let pfCurrentTab = 'youtube';
 let _db          = null;
 
-// ── Open IndexedDB ──
+// ── IndexedDB (for local video/image blobs only) ──
 function openDB() {
   return new Promise((resolve, reject) => {
     if (_db) { resolve(_db); return; }
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = e => {
       const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_META))
-        db.createObjectStore(STORE_META, { keyPath: 'id' });
       if (!db.objectStoreNames.contains(STORE_BLOB))
         db.createObjectStore(STORE_BLOB, { keyPath: 'id' });
     };
@@ -1213,72 +1220,64 @@ function openDB() {
   });
 }
 
-// ── Save all items (meta + blobs) ──
+// ── Save ──
+// YouTube/image-url items → window.storage (shared, all devices see them)
+// Local video/image blobs → IndexedDB (this device only)
 async function pfSave() {
   try {
-    const db = await openDB();
-    // Save meta (everything except raw src for local videos/images)
-    const metaTx   = db.transaction(STORE_META, 'readwrite');
-    const metaStore = metaTx.objectStore(STORE_META);
-    // Clear old meta and rewrite
-    await new Promise(r => { metaStore.clear().onsuccess = r; });
-    for (const item of pfItems) {
-      const meta = { id: item.id, type: item.type, title: item.title, desc: item.desc };
-      if (item.type === 'youtube') meta.src = item.src;        // just a video ID string
-      else if (item.type === 'image-url') meta.src = item.src; // just a URL string
-      // local video/image blobs: src is stored in STORE_BLOB
-      metaStore.put(meta);
+    // 1. Shared items (youtube + image-url) → window.storage
+    const sharedItems = pfItems
+      .filter(i => i.type === 'youtube' || i.type === 'image-url')
+      .map(i => ({ id: i.id, type: i.type, title: i.title, desc: i.desc, src: i.src }));
+    if (window.storage) {
+      await window.storage.set(SHARED_KEY, JSON.stringify(sharedItems), true);
     }
-    await new Promise((res, rej) => { metaTx.oncomplete = res; metaTx.onerror = rej; });
 
-    // Save blobs for local files
-    const blobTx    = db.transaction(STORE_BLOB, 'readwrite');
+    // 2. Local blob items → IndexedDB
+    const db       = await openDB();
+    const blobTx   = db.transaction(STORE_BLOB, 'readwrite');
     const blobStore = blobTx.objectStore(STORE_BLOB);
-    // Remove blobs for deleted items
-    const allIds    = new Set(pfItems.map(i => i.id));
-    await new Promise(r => {
-      blobStore.getAllKeys().onsuccess = e => {
-        e.target.result.forEach(k => { if (!allIds.has(k)) blobStore.delete(k); });
-        r();
-      };
-    });
+    blobStore.clear();
     for (const item of pfItems) {
       if ((item.type === 'video' || item.type === 'image') && item.src) {
-        blobStore.put({ id: item.id, src: item.src });
+        blobStore.put({ id: item.id, type: item.type, title: item.title, desc: item.desc, src: item.src });
       }
     }
     await new Promise((res, rej) => { blobTx.oncomplete = res; blobTx.onerror = rej; });
   } catch(e) { console.error('pfSave error:', e); }
 }
 
-// ── Load all items ──
+// ── Load ──
+// Merges shared (all-device) items + local blobs
 async function pfLoad() {
   try {
-    const db        = await openDB();
-    const metaList  = await new Promise((res, rej) => {
-      const tx = db.transaction(STORE_META, 'readonly');
-      const req = tx.objectStore(STORE_META).getAll();
-      req.onsuccess = () => res(req.result);
-      req.onerror   = () => rej(req.error);
+    // 1. Shared items from window.storage
+    let sharedItems = [];
+    if (window.storage) {
+      try {
+        const res = await window.storage.get(SHARED_KEY, true);
+        if (res && res.value) sharedItems = JSON.parse(res.value);
+      } catch(e) { sharedItems = []; }
+    }
+
+    // 2. Local blob items from IndexedDB
+    let localItems = [];
+    try {
+      const db     = await openDB();
+      localItems   = await new Promise((res, rej) => {
+        const tx  = db.transaction(STORE_BLOB, 'readonly');
+        const req = tx.objectStore(STORE_BLOB).getAll();
+        req.onsuccess = () => res(req.result);
+        req.onerror   = () => rej(req.error);
+      });
+    } catch(e) { localItems = []; }
+
+    // Merge: shared first, then local; deduplicate by id
+    const seen = new Set();
+    pfItems = [...sharedItems, ...localItems].filter(i => {
+      if (seen.has(i.id)) return false;
+      seen.add(i.id); return true;
     });
-    const blobMap   = await new Promise((res, rej) => {
-      const tx = db.transaction(STORE_BLOB, 'readonly');
-      const req = tx.objectStore(STORE_BLOB).getAll();
-      req.onsuccess = () => {
-        const m = {};
-        req.result.forEach(b => m[b.id] = b.src);
-        res(m);
-      };
-      req.onerror = () => rej(req.error);
-    });
-    pfItems = metaList.map(meta => {
-      const item = { ...meta };
-      if (meta.type === 'video' || meta.type === 'image') {
-        item.src = blobMap[meta.id] || '';
-      }
-      return item;
-    });
-    // Sort newest first (highest id first)
     pfItems.sort((a, b) => b.id - a.id);
   } catch(e) {
     console.error('pfLoad error:', e);
@@ -1486,26 +1485,34 @@ function renderGrid() {
     const card = document.createElement('div');
     card.className = 'pf-card';
 
-    let thumb = '';
-    if (item.type === 'youtube') {
-      thumb = `<img src="https://img.youtube.com/vi/${item.src}/mqdefault.jpg"
-                 alt="${item.title}" style="width:100%;height:100%;object-fit:cover;display:block;">
-               <div class="pf-play-btn">▶</div>`;
-    } else if (item.type === 'video') {
-      thumb = `<video preload="metadata" muted style="width:100%;height:100%;object-fit:cover;display:block;">
-                 <source src="${item.src}" type="video/mp4">
-               </video>
-               <div class="pf-play-btn">▶</div>`;
-    } else {
-      thumb = `<img src="${item.src}" alt="${item.title}" loading="lazy"
-                 style="width:100%;height:100%;object-fit:cover;display:block;">
-               <div class="pf-play-btn pf-zoom-btn">🔍</div>`;
-    }
-
     const mediaDiv = document.createElement('div');
     mediaDiv.className = 'pf-card-media';
-    mediaDiv.innerHTML = thumb;
-    mediaDiv.addEventListener('click', () => openLightbox(item));
+
+    if (item.type === 'youtube') {
+      // Direct embed — works on every device, no click needed to play
+      mediaDiv.innerHTML = `
+        <iframe
+          src="https://www.youtube.com/embed/${item.src}?rel=0&modestbranding=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"
+          style="width:100%;height:100%;border:none;display:block;border-radius:0;">
+        </iframe>`;
+      // Iframe handles its own click, no lightbox needed for youtube cards
+    } else if (item.type === 'video') {
+      mediaDiv.innerHTML = `
+        <video controls preload="metadata"
+          style="width:100%;height:100%;object-fit:cover;display:block;background:#000;">
+          <source src="${item.src}" type="video/mp4">
+        </video>`;
+    } else {
+      // image or image-url
+      mediaDiv.innerHTML = `
+        <img src="${item.src}" alt="${item.title}" loading="lazy"
+          style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="pf-play-btn pf-zoom-btn">🔍</div>`;
+      mediaDiv.addEventListener('click', () => openLightbox(item));
+    }
 
     if (pfIsAdmin) {
       const delBtn = document.createElement('button');
