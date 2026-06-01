@@ -732,25 +732,16 @@
     display: flex; align-items: center; justify-content: center;
   }
 
-  /* ── Play overlay on cards ── */
-  .pf-play-overlay {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.18);
-    transition: background 0.22s;
+  /* ── Card hover hint ── */
+  .pf-hover-hint {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.85);
+    padding: 0.3rem 0.85rem; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.5px;
+    opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    white-space: nowrap;
   }
-  .pf-card-media:hover .pf-play-overlay { background: rgba(0,0,0,0.38); }
-  .pf-play-circle {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: rgba(13,148,136,0.85);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
-    transition: transform 0.2s, background 0.2s;
-  }
-  .pf-card-media:hover .pf-play-circle {
-    transform: scale(1.12);
-    background: var(--teal-light);
-  }
+  .pf-card-media:hover .pf-hover-hint { opacity: 1; }
 
   /* ── Video Modal ── */
   #pfVideoModal {
@@ -760,53 +751,121 @@
   #pfVideoModal.active { display: flex; }
   #pfModalOverlay {
     position: absolute; inset: 0;
-    background: rgba(0,0,0,0.88);
-    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(8px);
     animation: lbFadeIn 0.2s ease;
   }
   #pfModalBox {
     position: relative; z-index: 2;
-    width: min(880px, 96vw);
-    background: #08111f;
-    border-radius: 16px;
+    width: min(900px, 96vw);
+    background: #060d18;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+    box-shadow: 0 28px 90px rgba(0,0,0,0.8);
     animation: modalSlideUp 0.28s cubic-bezier(0.4,0,0.2,1);
   }
   @keyframes modalSlideUp {
-    from { opacity:0; transform: translateY(30px) scale(0.97); }
+    from { opacity:0; transform: translateY(28px) scale(0.97); }
     to   { opacity:1; transform: translateY(0) scale(1); }
   }
   #pfModalHeader {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0.85rem 1.2rem;
-    background: #0d1a2e;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 0.8rem 1.1rem;
+    background: #0b1628;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
   #pfModalTitle {
-    color: #fff; font-weight: 600; font-size: 0.95rem;
+    color: #fff; font-weight: 600; font-size: 0.92rem;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-width: calc(100% - 48px);
+    max-width: calc(100% - 50px);
   }
   #pfModalClose {
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-    color: #fff; width: 34px; height: 34px; border-radius: 50%;
-    font-size: 1rem; cursor: pointer; flex-shrink: 0;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; width: 32px; height: 32px; border-radius: 50%;
+    font-size: 0.95rem; cursor: pointer; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     transition: background 0.2s;
   }
-  #pfModalClose:hover { background: rgba(239,68,68,0.75); border-color: transparent; }
+  #pfModalClose:hover { background: rgba(239,68,68,0.8); border-color: transparent; }
+
+  /* Player area: YouTube iframe hidden behind custom controls */
   #pfModalPlayer {
-    width: 100%; aspect-ratio: 16/9;
-    background: #000;
+    position: relative; width: 100%; aspect-ratio: 16/9;
+    background: #000; overflow: hidden;
   }
-  #pfModalFrame {
-    width: 100%; height: 100%; border: none; display: block;
+  #pfYtContainer {
+    position: absolute; inset: 0;
+    /* Push iframe slightly larger so YouTube UI is clipped out of view */
+    width: 100%; height: calc(100% + 80px);
+    top: -40px;
+    pointer-events: none; /* block direct interaction — custom controls handle it */
   }
+  #pfYtPlayer { width: 100%; height: 100%; }
+
+  /* Custom controls overlay */
+  #pfCustomControls {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    z-index: 5;
+    /* Show controls on hover or when paused */
+    opacity: 0; transition: opacity 0.25s;
+  }
+  #pfModalPlayer:hover #pfCustomControls,
+  #pfModalPlayer.paused  #pfCustomControls { opacity: 1; }
+
+  #pfCtrlTop { height: 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent); }
+
+  #pfCtrlMiddle {
+    display: flex; align-items: center; justify-content: center;
+    flex: 1;
+  }
+  .pf-ctrl-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; line-height: 1;
+  }
+  .pf-ctrl-big {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(4px);
+    transition: background 0.18s, transform 0.15s;
+  }
+  .pf-ctrl-big:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
+
+  #pfCtrlBottom {
+    background: linear-gradient(to top, rgba(0,0,0,0.72), transparent);
+    padding: 0.6rem 1rem 0.7rem;
+  }
+  #pfProgressWrap { margin-bottom: 0.5rem; padding: 6px 0; cursor: pointer; }
+  #pfProgressBg {
+    position: relative; width: 100%; height: 4px;
+    background: rgba(255,255,255,0.25); border-radius: 4px;
+    overflow: visible;
+  }
+  #pfProgressFill {
+    height: 100%; width: 0%; background: #fff;
+    border-radius: 4px; transition: width 0.3s linear;
+    pointer-events: none;
+  }
+  #pfProgressDot {
+    position: absolute; top: 50%; right: calc(100% - 0%);
+    transform: translate(50%, -50%);
+    width: 13px; height: 13px; border-radius: 50%;
+    background: #fff; opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+  }
+  #pfProgressWrap:hover #pfProgressDot { opacity: 1; }
+  #pfCtrlRow { display: flex; justify-content: space-between; align-items: center; }
+  #pfCtrlLeft  { display: flex; align-items: center; gap: 0.75rem; }
+  #pfCtrlRight { display: flex; align-items: center; }
+  #pfCtrlTime  { color: rgba(255,255,255,0.85); font-size: 0.78rem; font-family: monospace; }
+
   @media (max-width: 600px) {
     #pfModalBox { border-radius: 10px; }
-    #pfModalHeader { padding: 0.65rem 0.9rem; }
-    #pfModalTitle { font-size: 0.85rem; }
+    #pfModalHeader { padding: 0.6rem 0.85rem; }
+    .pf-ctrl-big { width: 56px; height: 56px; }
   }
 
 </style>
@@ -1190,7 +1249,7 @@
   </div>
 
 
-  <!-- VIDEO MODAL (clean player) -->
+  <!-- VIDEO MODAL — custom controls, YouTube hidden underneath -->
   <div id="pfVideoModal">
     <div id="pfModalOverlay"></div>
     <div id="pfModalBox">
@@ -1199,7 +1258,46 @@
         <button id="pfModalClose">&#x2715;</button>
       </div>
       <div id="pfModalPlayer">
-        <iframe id="pfModalFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <!-- YouTube iframe sits behind, controlled via JS API -->
+        <div id="pfYtContainer">
+          <div id="pfYtPlayer"></div>
+        </div>
+        <!-- Custom controls overlay -->
+        <div id="pfCustomControls">
+          <div id="pfCtrlTop"></div>
+          <div id="pfCtrlMiddle">
+            <button id="pfCtrlPlay" class="pf-ctrl-btn pf-ctrl-big">
+              <svg id="pfPlayIcon" viewBox="0 0 24 24" fill="white" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="pfPauseIcon" viewBox="0 0 24 24" fill="white" width="48" height="48" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+          </div>
+          <div id="pfCtrlBottom">
+            <div id="pfProgressWrap">
+              <div id="pfProgressBg">
+                <div id="pfProgressFill"></div>
+                <div id="pfProgressDot"></div>
+              </div>
+            </div>
+            <div id="pfCtrlRow">
+              <div id="pfCtrlLeft">
+                <button id="pfCtrlPlay2" class="pf-ctrl-btn">
+                  <svg id="pfPlayIcon2" viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M8 5v14l11-7z"/></svg>
+                  <svg id="pfPauseIcon2" viewBox="0 0 24 24" fill="white" width="22" height="22" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <button id="pfCtrlMute" class="pf-ctrl-btn">
+                  <svg id="pfVolIcon" viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                  <svg id="pfMuteIcon" viewBox="0 0 24 24" fill="white" width="20" height="20" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                </button>
+                <span id="pfCtrlTime">0:00 / 0:00</span>
+              </div>
+              <div id="pfCtrlRight">
+                <button id="pfCtrlFull" class="pf-ctrl-btn">
+                  <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1478,30 +1576,154 @@ function closeLightbox() {
   lbOpen = false;
 }
 
-// ── Video Modal (clean full-page player) ──
-let modalOpen = false;
+// ── Video Modal — YouTube IFrame API with custom controls ──
+let modalOpen  = false;
+let ytPlayer   = null;
+let ytReady    = false;
+let progressTimer = null;
+let isMuted    = false;
+let isPaused   = true;
+
+// Load YouTube IFrame API once
+(function loadYTApi() {
+  if (window.YT || document.getElementById('yt-api-script')) return;
+  const s = document.createElement('script');
+  s.id  = 'yt-api-script';
+  s.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(s);
+})();
+
+// Called by YouTube API when ready
+window.onYouTubeIframeAPIReady = function() { ytReady = true; };
 
 function openVideoModal(item) {
   const modal = document.getElementById('pfVideoModal');
-  const frame = document.getElementById('pfModalFrame');
-  const title = document.getElementById('pfModalTitle');
-
-  // Autoplay + rel=0 + modestbranding for cleanest look
-  frame.src = `https://www.youtube.com/embed/${item.src}?autoplay=1&rel=0&modestbranding=1&color=white&iv_load_policy=3`;
-  title.textContent = item.title;
+  document.getElementById('pfModalTitle').textContent = item.title;
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
   modalOpen = true;
+  setPaused(true);
+
+  const makePlayer = () => {
+    if (ytPlayer) {
+      ytPlayer.destroy();
+      ytPlayer = null;
+    }
+    document.getElementById('pfYtPlayer').innerHTML = '';
+    ytPlayer = new YT.Player('pfYtPlayer', {
+      videoId: item.src,
+      playerVars: {
+        autoplay: 1,
+        controls: 0,        // hide YouTube controls
+        rel: 0,
+        modestbranding: 1,
+        showinfo: 0,
+        iv_load_policy: 3,  // hide annotations
+        disablekb: 1,       // disable keyboard (we handle it)
+        playsinline: 1,
+        cc_load_policy: 0,
+        fs: 0,              // hide fullscreen btn (we have our own)
+        origin: location.origin,
+      },
+      events: {
+        onReady: e => { e.target.playVideo(); startProgress(); },
+        onStateChange: e => {
+          const s = e.data;
+          if (s === YT.PlayerState.PLAYING) { setPaused(false); startProgress(); }
+          if (s === YT.PlayerState.PAUSED)  { setPaused(true);  stopProgress(); }
+          if (s === YT.PlayerState.ENDED)   { setPaused(true);  stopProgress(); setProgress(0); }
+        }
+      }
+    });
+  };
+
+  if (window.YT && YT.Player) { makePlayer(); }
+  else {
+    // API not yet loaded — wait
+    const wait = setInterval(() => {
+      if (window.YT && YT.Player) { clearInterval(wait); makePlayer(); }
+    }, 100);
+  }
 }
 
 function closeVideoModal() {
   if (!modalOpen) return;
-  const modal = document.getElementById('pfVideoModal');
-  const frame = document.getElementById('pfModalFrame');
-  frame.src = '';   // stop video playback
-  modal.classList.remove('active');
+  stopProgress();
+  if (ytPlayer) { try { ytPlayer.stopVideo(); ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
+  document.getElementById('pfYtPlayer').innerHTML = '';
+  document.getElementById('pfVideoModal').classList.remove('active');
   document.body.style.overflow = '';
   modalOpen = false;
+  setPaused(true);
+}
+
+function setPaused(p) {
+  isPaused = p;
+  const player = document.getElementById('pfModalPlayer');
+  if (p) player.classList.add('paused'); else player.classList.remove('paused');
+  // big play/pause
+  document.getElementById('pfPlayIcon').style.display  = p ? '' : 'none';
+  document.getElementById('pfPauseIcon').style.display = p ? 'none' : '';
+  // bottom play/pause
+  document.getElementById('pfPlayIcon2').style.display  = p ? '' : 'none';
+  document.getElementById('pfPauseIcon2').style.display = p ? 'none' : '';
+}
+
+function togglePlayPause() {
+  if (!ytPlayer) return;
+  try {
+    if (isPaused) ytPlayer.playVideo(); else ytPlayer.pauseVideo();
+  } catch(e) {}
+}
+
+function toggleMute() {
+  if (!ytPlayer) return;
+  isMuted = !isMuted;
+  try {
+    isMuted ? ytPlayer.mute() : ytPlayer.unMute();
+  } catch(e) {}
+  document.getElementById('pfVolIcon').style.display  = isMuted ? 'none' : '';
+  document.getElementById('pfMuteIcon').style.display = isMuted ? '' : 'none';
+}
+
+function startProgress() {
+  stopProgress();
+  progressTimer = setInterval(() => {
+    if (!ytPlayer) return;
+    try {
+      const cur  = ytPlayer.getCurrentTime() || 0;
+      const dur  = ytPlayer.getDuration()    || 0;
+      const pct  = dur ? (cur / dur) * 100 : 0;
+      setProgress(pct);
+      document.getElementById('pfCtrlTime').textContent =
+        fmtTime(cur) + ' / ' + fmtTime(dur);
+      // Update dot position
+      document.getElementById('pfProgressDot').style.right = `calc(${100 - pct}% - 0px)`;
+    } catch(e) {}
+  }, 500);
+}
+function stopProgress() { clearInterval(progressTimer); }
+function setProgress(pct) {
+  document.getElementById('pfProgressFill').style.width = pct + '%';
+}
+function fmtTime(s) {
+  s = Math.floor(s || 0);
+  const m = Math.floor(s / 60); s = s % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+// Click on progress bar to seek
+function setupProgressClick() {
+  const wrap = document.getElementById('pfProgressWrap');
+  wrap.addEventListener('click', e => {
+    if (!ytPlayer) return;
+    const rect = wrap.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    try {
+      const dur = ytPlayer.getDuration() || 0;
+      ytPlayer.seekTo(pct * dur, true);
+    } catch(e2) {}
+  });
 }
 
 // ── Render grid ──
@@ -1525,13 +1747,7 @@ function renderGrid() {
       mediaDiv.innerHTML = `
         <img src="${hq}" onerror="this.src='${mq}'" alt="${item.title}"
           style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
-        <div class="pf-play-overlay">
-          <div class="pf-play-circle">
-            <svg viewBox="0 0 24 24" fill="white" width="40" height="40" style="margin-left:4px">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-          </div>
-        </div>`;
+        <div class="pf-hover-hint">&#9654; Play</div>`;
       mediaDiv.style.cursor = 'pointer';
       mediaDiv.addEventListener('click', () => openVideoModal(item));
     } else if (item.type === 'video') {
@@ -1636,6 +1852,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Video modal
   document.getElementById('pfModalClose').addEventListener('click', closeVideoModal);
   document.getElementById('pfModalOverlay').addEventListener('click', closeVideoModal);
+  document.getElementById('pfCtrlPlay').addEventListener('click', togglePlayPause);
+  document.getElementById('pfCtrlPlay2').addEventListener('click', togglePlayPause);
+  document.getElementById('pfCtrlMute').addEventListener('click', toggleMute);
+  document.getElementById('pfCtrlFull').addEventListener('click', () => {
+    const box = document.getElementById('pfModalPlayer');
+    if (box.requestFullscreen) box.requestFullscreen();
+    else if (box.webkitRequestFullscreen) box.webkitRequestFullscreen();
+  });
+  setupProgressClick();
   document.getElementById('pfLightbox').addEventListener('click', e => {
     if (e.target === document.getElementById('pfLightbox')) closeLightbox();
   });
