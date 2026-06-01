@@ -900,12 +900,16 @@
     width: 100%; height: 100%;
     pointer-events: none; /* block YouTube's own UI — custom controls sit above */
   }
-  #pfYtPlayer { width: 100%; height: 100%; }
+  /* Scale iframe slightly to push YouTube's center play button off-center & crop edges */
+  #pfYtPlayer {
+    width: 100%; height: 100%;
+    transform: scale(1.015);
+  }
   /* Black cover hides YouTube's splash/play button before our player takes over */
   #pfYtCover {
     position: absolute; inset: 0; z-index: 4;
     background: #000;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s ease;
   }
   #pfYtCover.hidden { opacity: 0; pointer-events: none; }
 
@@ -1383,8 +1387,10 @@
         <!-- YouTube iframe sits behind, controlled via JS API -->
         <div id="pfYtContainer">
           <div id="pfYtPlayer"></div>
+          <!-- Transparent blocker prevents clicks reaching YouTube's iframe UI -->
+          <div style="position:absolute;inset:0;z-index:2;background:transparent;"></div>
         </div>
-        <!-- Black cover: hides YouTube's own play btn until video starts -->
+        <!-- Black cover: hides YouTube's splash/play button until video starts -->
         <div id="pfYtCover"></div>
         <!-- Custom controls overlay -->
         <div id="pfCustomControls">
@@ -1748,16 +1754,33 @@ function openVideoModal(item) {
         cc_load_policy: 0,
         fs: 0,              // hide fullscreen btn (we have our own)
         origin: location.origin,
+        vq: 'hd1080',       // request 1080p quality
       },
       events: {
-        onReady: e => { e.target.playVideo(); startProgress(); },
+        onReady: e => {
+          try { e.target.setPlaybackQuality('hd1080'); } catch(_) {}
+          e.target.playVideo();
+          startProgress();
+        },
         onStateChange: e => {
           const s = e.data;
           if (s === YT.PlayerState.PLAYING) {
             setPaused(false); startProgress();
-            // Remove black cover once video is actually playing
-            const cover = document.getElementById('pfYtCover');
-            if (cover) cover.classList.add('hidden');
+            // Set quality to highest available
+            try {
+              const levels = e.target.getAvailableQualityLevels();
+              if (levels && levels.length) {
+                const preferred = ['hd2160','hd1440','hd1080','hd720','large','medium'];
+                for (const q of preferred) {
+                  if (levels.includes(q)) { e.target.setPlaybackQuality(q); break; }
+                }
+              }
+            } catch(_) {}
+            // Remove black cover once video is actually playing (slight delay hides YT play btn)
+            setTimeout(() => {
+              const cover = document.getElementById('pfYtCover');
+              if (cover) cover.classList.add('hidden');
+            }, 300);
           }
           if (s === YT.PlayerState.PAUSED)  { setPaused(true);  stopProgress(); }
           if (s === YT.PlayerState.ENDED)   { setPaused(true);  stopProgress(); setProgress(0); }
