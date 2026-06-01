@@ -1185,20 +1185,105 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 // ══════════════════════════════════════════
 // PORTFOLIO FULL-PAGE SYSTEM
 // ══════════════════════════════════════════
-const PF_KEY     = 'pf_items_v2';
 const ADMIN_PASS = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
+const DB_NAME    = 'PortfolioDB';
+const DB_VERSION = 1;
+const STORE_META = 'pf_meta';   // title, desc, type, id — small data
+const STORE_BLOB = 'pf_blobs';  // actual video/image binary data
 
 let pfItems      = [];
 let pfIsAdmin    = false;
 let pfCurrentTab = 'youtube';
+let _db          = null;
 
-// ── Persist (localStorage — data stays in your browser) ──
-function pfLoad() {
-  try { pfItems = JSON.parse(localStorage.getItem(PF_KEY) || '[]'); }
-  catch(e) { pfItems = []; }
+// ── Open IndexedDB ──
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (_db) { resolve(_db); return; }
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_META))
+        db.createObjectStore(STORE_META, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(STORE_BLOB))
+        db.createObjectStore(STORE_BLOB, { keyPath: 'id' });
+    };
+    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
+    req.onerror   = e => reject(e.target.error);
+  });
 }
-function pfSave() {
-  try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
+
+// ── Save all items (meta + blobs) ──
+async function pfSave() {
+  try {
+    const db = await openDB();
+    // Save meta (everything except raw src for local videos/images)
+    const metaTx   = db.transaction(STORE_META, 'readwrite');
+    const metaStore = metaTx.objectStore(STORE_META);
+    // Clear old meta and rewrite
+    await new Promise(r => { metaStore.clear().onsuccess = r; });
+    for (const item of pfItems) {
+      const meta = { id: item.id, type: item.type, title: item.title, desc: item.desc };
+      if (item.type === 'youtube') meta.src = item.src;        // just a video ID string
+      else if (item.type === 'image-url') meta.src = item.src; // just a URL string
+      // local video/image blobs: src is stored in STORE_BLOB
+      metaStore.put(meta);
+    }
+    await new Promise((res, rej) => { metaTx.oncomplete = res; metaTx.onerror = rej; });
+
+    // Save blobs for local files
+    const blobTx    = db.transaction(STORE_BLOB, 'readwrite');
+    const blobStore = blobTx.objectStore(STORE_BLOB);
+    // Remove blobs for deleted items
+    const allIds    = new Set(pfItems.map(i => i.id));
+    await new Promise(r => {
+      blobStore.getAllKeys().onsuccess = e => {
+        e.target.result.forEach(k => { if (!allIds.has(k)) blobStore.delete(k); });
+        r();
+      };
+    });
+    for (const item of pfItems) {
+      if ((item.type === 'video' || item.type === 'image') && item.src) {
+        blobStore.put({ id: item.id, src: item.src });
+      }
+    }
+    await new Promise((res, rej) => { blobTx.oncomplete = res; blobTx.onerror = rej; });
+  } catch(e) { console.error('pfSave error:', e); }
+}
+
+// ── Load all items ──
+async function pfLoad() {
+  try {
+    const db        = await openDB();
+    const metaList  = await new Promise((res, rej) => {
+      const tx = db.transaction(STORE_META, 'readonly');
+      const req = tx.objectStore(STORE_META).getAll();
+      req.onsuccess = () => res(req.result);
+      req.onerror   = () => rej(req.error);
+    });
+    const blobMap   = await new Promise((res, rej) => {
+      const tx = db.transaction(STORE_BLOB, 'readonly');
+      const req = tx.objectStore(STORE_BLOB).getAll();
+      req.onsuccess = () => {
+        const m = {};
+        req.result.forEach(b => m[b.id] = b.src);
+        res(m);
+      };
+      req.onerror = () => rej(req.error);
+    });
+    pfItems = metaList.map(meta => {
+      const item = { ...meta };
+      if (meta.type === 'video' || meta.type === 'image') {
+        item.src = blobMap[meta.id] || '';
+      }
+      return item;
+    });
+    // Sort newest first (highest id first)
+    pfItems.sort((a, b) => b.id - a.id);
+  } catch(e) {
+    console.error('pfLoad error:', e);
+    pfItems = [];
+  }
 }
 
 // ── DOM shortcuts ──
@@ -1206,8 +1291,7 @@ const mainSite = () => document.getElementById('mainSite');
 const pfPage   = () => document.getElementById('pfPage');
 
 // ── History API: browser back button support ──
-function openPortfolio() {
-  pfLoad();
+async function openPortfolio() {
   mainSite().style.display = 'none';
   pfPage().classList.add('active');
   pfPage().scrollTop = 0;
@@ -1217,6 +1301,10 @@ function openPortfolio() {
   document.getElementById('pfAdminPanel').classList.remove('active');
   pfIsAdmin = false;
   history.pushState({ portfolio: true }, '', '#portfolio');
+  // Show loading state while DB loads
+  document.getElementById('pfGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,0.4);padding:4rem">Loading…</div>';
+  document.getElementById('pfEmpty').style.display = 'none';
+  await pfLoad();
   renderGrid();
 }
 
@@ -1292,7 +1380,7 @@ function switchTab(tab) {
 }
 
 // ── Add YouTube (recommended — works for everyone) ──
-function addYoutube() {
+async function addYoutube() {
   const title = document.getElementById('pfYtTitle').value.trim() || 'YouTube Video';
   const desc  = document.getElementById('pfYtDesc').value.trim();
   let   url   = document.getElementById('pfYtUrl').value.trim();
@@ -1300,35 +1388,36 @@ function addYoutube() {
   const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   const vid = m ? m[1] : url;
   pfItems.unshift({ id: Date.now(), type: 'youtube', title, desc, src: vid });
-  pfSave(); renderGrid(); renderAdminList();
+  await pfSave(); renderGrid(); renderAdminList();
   ['pfYtTitle','pfYtDesc','pfYtUrl'].forEach(id => document.getElementById(id).value = '');
 }
 
 // ── Add Image URL ──
-function addImageUrl() {
+async function addImageUrl() {
   const title = document.getElementById('pfImgTitle').value.trim() || 'Image';
   const desc  = document.getElementById('pfImgDesc').value.trim();
   const url   = document.getElementById('pfImgUrl').value.trim();
   if (!url) { alert('Please enter an image URL.'); return; }
-  pfItems.unshift({ id: Date.now(), type: 'image', title, desc, src: url });
-  pfSave(); renderGrid(); renderAdminList();
+  pfItems.unshift({ id: Date.now(), type: 'image-url', title, desc, src: url });
+  await pfSave(); renderGrid(); renderAdminList();
   document.getElementById('pfImgTitle').value = '';
   document.getElementById('pfImgDesc').value  = '';
   document.getElementById('pfImgUrl').value   = '';
 }
 
-// ── Add Video File (local — only visible on this device) ──
+// ── Add Video File (stored in IndexedDB — unlimited size) ──
 function addVideoFile() {
   const title = document.getElementById('pfVidTitle').value.trim() || 'Video';
   const desc  = document.getElementById('pfVidDesc').value.trim();
   const file  = document.getElementById('pfVidFile').files[0];
   if (!file) { alert('Please select a video file.'); return; }
   const btn = document.querySelector('#tabPanelVideo .pf-add-btn');
-  btn.textContent = 'Loading…'; btn.disabled = true;
+  btn.textContent = 'Saving…'; btn.disabled = true;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
     pfItems.unshift({ id: Date.now(), type: 'video', title, desc, src: e.target.result });
-    pfSave(); renderGrid(); renderAdminList();
+    await pfSave();
+    renderGrid(); renderAdminList();
     document.getElementById('pfVidTitle').value = '';
     document.getElementById('pfVidDesc').value  = '';
     document.getElementById('pfVidFile').value  = '';
@@ -1338,10 +1427,10 @@ function addVideoFile() {
 }
 
 // ── Delete ──
-function deleteItem(id) {
+async function deleteItem(id) {
   if (!confirm('Delete this item?')) return;
   pfItems = pfItems.filter(i => i.id !== id);
-  pfSave(); renderGrid(); renderAdminList();
+  await pfSave(); renderGrid(); renderAdminList();
 }
 
 // ══════════════════════════════════════════
@@ -1364,7 +1453,7 @@ function openLightbox(item) {
       <video controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:12px;background:#000;">
         <source src="${item.src}" type="video/mp4">
       </video>`;
-  } else {
+  } else if (item.type === 'image' || item.type === 'image-url') {
     lbContent.innerHTML = `
       <img src="${item.src}" alt="${item.title}"
         style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;display:block;margin:auto;">`;
@@ -1449,7 +1538,7 @@ function renderAdminList() {
   pfItems.forEach(item => {
     const row = document.createElement('div');
     row.className = 'pf-item-row';
-    const icon = item.type === 'youtube' ? '▶' : item.type === 'image' ? '🖼' : '🎬';
+    const icon = item.type === 'youtube' ? '▶' : (item.type === 'image' || item.type === 'image-url') ? '🖼' : '🎬';
     const delBtn = document.createElement('button');
     delBtn.className = 'pf-del-btn';
     delBtn.textContent = 'Delete';
