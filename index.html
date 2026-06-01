@@ -759,7 +759,7 @@
     </p>
     <div class="hero-cta">
       <a href="#experience" class="btn btn-primary">View My Work</a>
-      <button onclick="openPortfolio()" class="btn btn-portfolio">Portfolio</button>
+      <button id="btnOpenPortfolio" class="btn btn-portfolio">Portfolio</button>
       <a href="#contact" class="btn btn-secondary">Get In Touch</a>
     </div>
   </div>
@@ -1005,11 +1005,11 @@
 
   <!-- Portfolio Navbar -->
   <div class="pf-navbar">
-    <button class="pf-back-btn" onclick="closePortfolio()">
+    <button class="pf-back-btn" id="btnClosePortfolio">
       <span class="pf-back-arrow">←</span> Back to Home
     </button>
     <div class="pf-nav-title">Mir Muhammad <span>Riyad</span></div>
-    <button class="pf-admin-btn" onclick="toggleAdminArea()">⚙ Admin</button>
+    <button class="pf-admin-btn" id="btnToggleAdmin">⚙ Admin</button>
   </div>
 
   <div class="pf-page-inner">
@@ -1025,7 +1025,7 @@
       <h4>🔐 Admin Login</h4>
       <div class="pf-login-row">
         <input class="pf-input" type="password" id="pfPasswordInput" placeholder="Enter admin password" />
-        <button class="pf-add-btn" onclick="doAdminLogin()">Login</button>
+        <button class="pf-add-btn" id="btnDoLogin">Login</button>
       </div>
       <div class="pf-login-msg" id="pfLoginMsg"></div>
     </div>
@@ -1035,9 +1035,9 @@
       <div class="pf-admin-title">⚙ Admin Panel — Add New Content</div>
 
       <div class="pf-type-tabs">
-        <button class="pf-tab" id="tabVideo" onclick="switchTab('video')">🎬 Video File</button>
-        <button class="pf-tab active" id="tabYt" onclick="switchTab('youtube')">▶ YouTube</button>
-        <button class="pf-tab" id="tabImg" onclick="switchTab('image')">🖼 Image URL</button>
+        <button class="pf-tab" id="tabVideo">🎬 Video File</button>
+        <button class="pf-tab active" id="tabYt">▶ YouTube</button>
+        <button class="pf-tab" id="tabImg">🖼 Image URL</button>
       </div>
 
       <!-- Video upload -->
@@ -1048,7 +1048,7 @@
         </div>
         <div class="pf-form-row">
           <input class="pf-input" type="file" id="pfVidFile" accept="video/*" style="padding:0.45rem 0.7rem;" />
-          <button class="pf-add-btn" onclick="addVideoFile()">+ Add</button>
+          <button class="pf-add-btn" id="btnAddVideo">+ Add</button>
         </div>
         <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">⚠ Video file শুধু এই device এ দেখা যাবে। সবার জন্য YouTube tab ব্যবহার করুন।</p>
       </div>
@@ -1061,7 +1061,7 @@
         </div>
         <div class="pf-form-row">
           <input class="pf-input" type="text" id="pfYtUrl" placeholder="YouTube URL or Video ID" />
-          <button class="pf-add-btn" onclick="addYoutube()">+ Add</button>
+          <button class="pf-add-btn" id="btnAddYoutube">+ Add</button>
         </div>
         <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ YouTube Unlisted video সবাই দেখতে পাবে। সবচেয়ে ভালো option।</p>
       </div>
@@ -1074,14 +1074,14 @@
         </div>
         <div class="pf-form-row">
           <input class="pf-input" type="text" id="pfImgUrl" placeholder="Image URL (e.g. https://i.imgur.com/...)" />
-          <button class="pf-add-btn" onclick="addImageUrl()">+ Add</button>
+          <button class="pf-add-btn" id="btnAddImage">+ Add</button>
         </div>
         <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Imgur বা Google Drive এ upload করে link দাও — সবাই দেখতে পাবে।</p>
       </div>
 
       <div class="pf-item-list" id="pfItemList"></div>
       <div style="margin-top:0.8rem;">
-        <button onclick="adminLogout()" style="background:none;border:none;color:rgba(255,100,100,0.6);font-size:0.8rem;cursor:pointer;">Logout</button>
+        <button id="btnAdminLogout" style="background:none;border:none;color:rgba(255,100,100,0.6);font-size:0.8rem;cursor:pointer;">Logout</button>
       </div>
     </div>
 
@@ -1098,11 +1098,11 @@
   </footer>
 
   <!-- LIGHTBOX -->
-  <div id="pfLightbox" onclick="if(event.target===this)closeLightbox()">
+  <div id="pfLightbox">
     <div id="pfLbInner">
       <div id="pfLbHeader">
         <span id="pfLbTitle"></span>
-        <button id="pfLbClose" onclick="closeLightbox()">✕</button>
+        <button id="pfLbClose">✕</button>
       </div>
       <div id="pfLbContent"></div>
     </div>
@@ -1410,18 +1410,27 @@ function renderGrid() {
                <div class="pf-play-btn pf-zoom-btn">🔍</div>`;
     }
 
-    const delBtn = pfIsAdmin
-      ? `<button class="pf-card-del" onclick="event.stopPropagation();deleteItem(${item.id})" title="Delete">×</button>`
-      : '';
+    const mediaDiv = document.createElement('div');
+    mediaDiv.className = 'pf-card-media';
+    mediaDiv.innerHTML = thumb;
+    mediaDiv.addEventListener('click', () => openLightbox(item));
 
-    card.innerHTML = `
-      <div class="pf-card-media">${thumb}${delBtn}</div>
-      <div class="pf-card-info">
-        <div class="pf-card-title">${item.title}</div>
-        ${item.desc ? `<div class="pf-card-desc">${item.desc}</div>` : ''}
-      </div>`;
+    if (pfIsAdmin) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'pf-card-del';
+      delBtn.title = 'Delete';
+      delBtn.textContent = '×';
+      delBtn.addEventListener('click', e => { e.stopPropagation(); deleteItem(item.id); });
+      mediaDiv.appendChild(delBtn);
+    }
 
-    card.querySelector('.pf-card-media').addEventListener('click', () => openLightbox(item));
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'pf-card-info';
+    infoDiv.innerHTML = `<div class="pf-card-title">${item.title}</div>
+      ${item.desc ? `<div class="pf-card-desc">${item.desc}</div>` : ''}`;
+
+    card.appendChild(mediaDiv);
+    card.appendChild(infoDiv);
     grid.appendChild(card);
   });
 }
@@ -1438,8 +1447,12 @@ function renderAdminList() {
     const row = document.createElement('div');
     row.className = 'pf-item-row';
     const icon = item.type === 'youtube' ? '▶' : item.type === 'image' ? '🖼' : '🎬';
-    row.innerHTML = `<span>${icon} ${item.title}</span>
-      <button class="pf-del-btn" onclick="deleteItem(${item.id})">Delete</button>`;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'pf-del-btn';
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => deleteItem(item.id));
+    row.innerHTML = `<span>${icon} ${item.title}</span>`;
+    row.appendChild(delBtn);
     list.appendChild(row);
   });
 }
@@ -1450,6 +1463,38 @@ document.addEventListener('keydown', e => {
     if (lbOpen) { closeLightbox(); return; }
     if (pfPage().classList.contains('active')) closePortfolio();
   }
+});
+
+// ══════════════════════════════════════════
+// ALL EVENT LISTENERS (no inline onclick)
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Portfolio open/close
+  document.getElementById('btnOpenPortfolio').addEventListener('click', openPortfolio);
+  document.getElementById('btnClosePortfolio').addEventListener('click', closePortfolio);
+  document.getElementById('btnToggleAdmin').addEventListener('click', toggleAdminArea);
+
+  // Admin login
+  document.getElementById('btnDoLogin').addEventListener('click', doAdminLogin);
+  document.getElementById('btnAdminLogout').addEventListener('click', adminLogout);
+
+  // Tabs
+  document.getElementById('tabVideo').addEventListener('click', () => switchTab('video'));
+  document.getElementById('tabYt').addEventListener('click', () => switchTab('youtube'));
+  document.getElementById('tabImg').addEventListener('click', () => switchTab('image'));
+
+  // Add content buttons
+  document.getElementById('btnAddVideo').addEventListener('click', addVideoFile);
+  document.getElementById('btnAddYoutube').addEventListener('click', addYoutube);
+  document.getElementById('btnAddImage').addEventListener('click', addImageUrl);
+
+  // Lightbox close
+  document.getElementById('pfLbClose').addEventListener('click', closeLightbox);
+  document.getElementById('pfLightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('pfLightbox')) closeLightbox();
+  });
+
 });
 
 </script>
