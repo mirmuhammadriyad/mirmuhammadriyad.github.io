@@ -795,12 +795,17 @@
   }
   #pfYtContainer {
     position: absolute; inset: 0;
-    /* Push iframe slightly larger so YouTube UI is clipped out of view */
-    width: 100%; height: calc(100% + 80px);
-    top: -40px;
-    pointer-events: none; /* block direct interaction — custom controls handle it */
+    width: 100%; height: 100%;
+    pointer-events: none; /* block YouTube's own UI — custom controls sit above */
   }
   #pfYtPlayer { width: 100%; height: 100%; }
+  /* Black cover hides YouTube's splash/play button before our player takes over */
+  #pfYtCover {
+    position: absolute; inset: 0; z-index: 4;
+    background: #000;
+    transition: opacity 0.4s ease;
+  }
+  #pfYtCover.hidden { opacity: 0; pointer-events: none; }
 
   /* Custom controls overlay */
   #pfCustomControls {
@@ -808,34 +813,45 @@
     display: flex; flex-direction: column;
     justify-content: space-between;
     z-index: 5;
-    /* Show controls on hover or when paused */
-    opacity: 0; transition: opacity 0.25s;
+    opacity: 0; transition: opacity 0.3s;
+    /* Transparent so video shows through */
+    background: transparent;
   }
-  #pfModalPlayer:hover #pfCustomControls,
-  #pfModalPlayer.paused  #pfCustomControls { opacity: 1; }
+  /* Show bottom bar + center btn on hover */
+  #pfModalPlayer:hover #pfCustomControls { opacity: 1; }
+  /* When paused: always show */
+  #pfModalPlayer.paused #pfCustomControls { opacity: 1; }
+  /* When playing and not hovering: hide center btn, keep bottom on hover only */
+  #pfModalPlayer:not(.paused):not(:hover) #pfCtrlMiddle { opacity: 0; }
 
-  #pfCtrlTop { height: 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent); }
+  #pfCtrlTop { height: 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.45), transparent); }
 
   #pfCtrlMiddle {
     display: flex; align-items: center; justify-content: center;
-    flex: 1;
+    flex: 1; transition: opacity 0.25s;
   }
+  /* Hide center big button while playing — only show on pause/hover */
+  #pfModalPlayer:not(.paused) #pfCtrlMiddle { opacity: 0; pointer-events: none; }
+  #pfModalPlayer:not(.paused):hover #pfCtrlMiddle { opacity: 1; pointer-events: auto; }
+  #pfModalPlayer.paused #pfCtrlMiddle { opacity: 1; pointer-events: auto; }
+
   .pf-ctrl-btn {
     background: none; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     padding: 0; line-height: 1;
   }
   .pf-ctrl-big {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: rgba(255,255,255,0.12);
+    width: 68px; height: 68px; border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    border: 2px solid rgba(255,255,255,0.35);
     backdrop-filter: blur(4px);
     transition: background 0.18s, transform 0.15s;
   }
-  .pf-ctrl-big:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
+  .pf-ctrl-big:hover { background: rgba(0,0,0,0.75); transform: scale(1.08); }
 
   #pfCtrlBottom {
-    background: linear-gradient(to top, rgba(0,0,0,0.72), transparent);
-    padding: 0.6rem 1rem 0.7rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+    padding: 0.5rem 1rem 0.75rem;
   }
   #pfProgressWrap { margin-bottom: 0.5rem; padding: 6px 0; cursor: pointer; }
   #pfProgressBg {
@@ -1262,6 +1278,8 @@
         <div id="pfYtContainer">
           <div id="pfYtPlayer"></div>
         </div>
+        <!-- Black cover: hides YouTube's own play btn until video starts -->
+        <div id="pfYtCover"></div>
         <!-- Custom controls overlay -->
         <div id="pfCustomControls">
           <div id="pfCtrlTop"></div>
@@ -1629,7 +1647,12 @@ function openVideoModal(item) {
         onReady: e => { e.target.playVideo(); startProgress(); },
         onStateChange: e => {
           const s = e.data;
-          if (s === YT.PlayerState.PLAYING) { setPaused(false); startProgress(); }
+          if (s === YT.PlayerState.PLAYING) {
+            setPaused(false); startProgress();
+            // Remove black cover once video is actually playing
+            const cover = document.getElementById('pfYtCover');
+            if (cover) cover.classList.add('hidden');
+          }
           if (s === YT.PlayerState.PAUSED)  { setPaused(true);  stopProgress(); }
           if (s === YT.PlayerState.ENDED)   { setPaused(true);  stopProgress(); setProgress(0); }
         }
@@ -1651,6 +1674,9 @@ function closeVideoModal() {
   stopProgress();
   if (ytPlayer) { try { ytPlayer.stopVideo(); ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
   document.getElementById('pfYtPlayer').innerHTML = '';
+  // Reset cover for next open
+  const cover = document.getElementById('pfYtCover');
+  if (cover) cover.classList.remove('hidden');
   document.getElementById('pfVideoModal').classList.remove('active');
   document.body.style.overflow = '';
   modalOpen = false;
