@@ -91,7 +91,7 @@
     background: linear-gradient(135deg, var(--navy) 0%, #0f2044 60%, #0d2b3e 100%);
     display: grid; grid-template-columns: 1fr 1fr;
     align-items: center; gap: 0;
-    position: relative; overflow: hidden;
+    position: relative; overflow: visible;
     padding-top: 72px;
   }
   .hero::before {
@@ -112,9 +112,10 @@
   }
 
   .hero-text {
-    padding: 4rem 3rem 4rem 5rem;
+    padding: 4rem 2rem 4rem 4rem;
     animation: fadeInLeft 0.8s ease forwards;
     position: relative; z-index: 2;
+    min-width: 0;
   }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 0.5rem;
@@ -143,20 +144,22 @@
     margin-bottom: 2.5rem;
   }
   .hero-cta {
-    display: flex; gap: 1rem; flex-wrap: nowrap;
+    display: flex; gap: 0.75rem; flex-wrap: nowrap;
     position: relative; z-index: 10;
+    align-items: center;
   }
   @media (max-width: 700px) {
-    .hero-cta { flex-wrap: wrap; }
+    .hero-cta { flex-wrap: wrap; gap: 0.75rem; }
   }
   .btn {
     display: inline-block;
-    padding: 0.85rem 2rem; border-radius: 8px;
-    font-weight: 600; font-size: 0.9rem;
+    padding: 0.85rem 1.5rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.88rem;
     cursor: pointer; transition: all 0.3s; text-decoration: none;
     letter-spacing: 0.3px; pointer-events: auto;
     position: relative; z-index: 10;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .btn-primary {
     background: var(--teal); color: #fff;
