@@ -143,8 +143,11 @@
     margin-bottom: 2.5rem;
   }
   .hero-cta {
-    display: flex; gap: 1rem; flex-wrap: wrap;
+    display: flex; gap: 1rem; flex-wrap: nowrap;
     position: relative; z-index: 10;
+  }
+  @media (max-width: 700px) {
+    .hero-cta { flex-wrap: wrap; }
   }
   .btn {
     display: inline-block;
@@ -153,6 +156,7 @@
     cursor: pointer; transition: all 0.3s; text-decoration: none;
     letter-spacing: 0.3px; pointer-events: auto;
     position: relative; z-index: 10;
+    white-space: nowrap;
   }
   .btn-primary {
     background: var(--teal); color: #fff;
@@ -161,6 +165,14 @@
   .btn-primary:hover {
     background: var(--teal-light); transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(13,148,136,0.4);
+  }
+  .btn-portfolio {
+    background: linear-gradient(135deg, var(--gold), #f59e0b);
+    color: #0a1628; border: none;
+  }
+  .btn-portfolio:hover {
+    filter: brightness(1.1); transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245,158,11,0.4);
   }
   .btn-secondary {
     background: transparent; color: rgba(255,255,255,0.85);
@@ -424,7 +436,196 @@
     opacity: 1; transform: translateY(0);
   }
 
-  /* ─── RESPONSIVE ─── */
+
+  /* ─── PORTFOLIO FULL PAGE ─── */
+  #pfPage {
+    display: none;
+    position: fixed; inset: 0; z-index: 500;
+    background: #050e1c;
+    overflow-y: auto;
+    animation: pfSlideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  #pfPage.active { display: block; }
+
+  @keyframes pfSlideIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Navbar */
+  .pf-navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(5,14,28,0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(13,148,136,0.25);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 2rem; gap: 1rem;
+  }
+  .pf-back-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8); border-radius: 8px;
+    padding: 0.5rem 1.1rem; font-size: 0.88rem;
+    cursor: pointer; transition: all 0.25s; font-weight: 500;
+    white-space: nowrap;
+  }
+  .pf-back-btn:hover {
+    background: rgba(13,148,136,0.15);
+    border-color: var(--teal-light); color: var(--teal-light);
+    transform: translateX(-3px);
+  }
+  .pf-back-arrow { font-size: 1rem; transition: transform 0.25s; }
+  .pf-back-btn:hover .pf-back-arrow { transform: translateX(-3px); }
+
+  .pf-nav-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; color: #fff; flex: 1; text-align: center;
+  }
+  .pf-nav-title span { color: var(--teal-light); }
+
+  .pf-admin-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.5); font-size: 0.82rem;
+    padding: 0.45rem 1rem; border-radius: 7px;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .pf-admin-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Inner content */
+  .pf-page-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  /* Hero heading */
+  .pf-page-hero { text-align: center; margin-bottom: 3rem; }
+  .pf-page-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; color: #fff; margin-bottom: 0.6rem;
+  }
+  .pf-page-hero h1 span { color: var(--gold); }
+  .pf-page-hero p { color: rgba(255,255,255,0.45); font-size: 1rem; }
+
+  /* grid */
+  .pf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .pf-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .pf-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+  }
+  .pf-card-media {
+    width: 100%; aspect-ratio: 16/9;
+    background: #050e1c; position: relative;
+  }
+  .pf-card-media video,
+  .pf-card-media img   { width:100%; height:100%; object-fit:cover; display:block; }
+  .pf-card-media iframe { width:100%; height:100%; border:none; display:block; }
+  .pf-card-info { padding: 0.9rem 1.1rem; }
+  .pf-card-title { color:#fff; font-weight:600; font-size:0.95rem; margin-bottom:0.25rem; }
+  .pf-card-desc  { color:rgba(255,255,255,0.42); font-size:0.82rem; }
+  .pf-card-del {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(239,68,68,0.85); border: none; color: #fff;
+    border-radius: 50%; width: 28px; height: 28px; font-size: 1rem;
+    cursor: pointer; display: none; align-items: center; justify-content: center;
+    line-height: 1; transition: background 0.2s;
+  }
+  .pf-card:hover .pf-card-del { display: flex; }
+  .pf-card-del:hover { background: rgba(239,68,68,1); }
+
+  .pf-empty {
+    grid-column: 1/-1; text-align: center;
+    color: rgba(255,255,255,0.28); padding: 5rem 1rem;
+    font-size: 1rem; line-height: 2;
+  }
+
+  /* admin panel */
+  .pf-admin-panel {
+    display: none;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 12px; padding: 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+  .pf-admin-panel.active { display: block; }
+  .pf-admin-title {
+    color: var(--gold); font-weight: 700;
+    font-size: 1rem; margin-bottom: 1.2rem;
+  }
+  .pf-form-row { display:flex; gap:0.7rem; flex-wrap:wrap; margin-bottom:0.8rem; }
+  .pf-input {
+    flex:1; min-width:150px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 7px; color: #fff;
+    padding: 0.6rem 0.9rem; font-size: 0.87rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .pf-input:focus { border-color: var(--teal-light); }
+  .pf-input::placeholder { color: rgba(255,255,255,0.28); }
+  .pf-type-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .pf-tab {
+    padding: 0.42rem 1rem; border-radius: 6px; font-size: 0.82rem;
+    cursor: pointer; border: 1px solid rgba(255,255,255,0.14);
+    background: none; color: rgba(255,255,255,0.45); transition: all 0.2s;
+  }
+  .pf-tab.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .pf-add-btn {
+    background: var(--gold); color: #0a1628; border: none;
+    padding: 0.6rem 1.4rem; border-radius: 7px;
+    font-weight: 700; cursor: pointer; font-size: 0.87rem;
+    transition: filter 0.2s; white-space: nowrap;
+  }
+  .pf-add-btn:hover { filter: brightness(1.1); }
+  .pf-item-list { margin-top: 1rem; display:flex; flex-direction:column; gap:0.5rem; }
+  .pf-item-row {
+    display:flex; align-items:center; gap:0.6rem;
+    background: rgba(255,255,255,0.04); border-radius:7px;
+    padding: 0.5rem 0.9rem;
+  }
+  .pf-item-row span {
+    flex:1; color:rgba(255,255,255,0.65); font-size:0.84rem;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .pf-del-btn {
+    background: rgba(239,68,68,0.14); border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171; border-radius: 5px; padding: 0.25rem 0.65rem;
+    font-size: 0.76rem; cursor: pointer; transition: all 0.2s;
+  }
+  .pf-del-btn:hover { background: rgba(239,68,68,0.3); }
+
+  /* login box */
+  .pf-login {
+    display: none; background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(245,158,11,0.2); border-radius: 10px;
+    padding: 1.3rem; margin-bottom: 2rem;
+  }
+  .pf-login.active { display: block; }
+  .pf-login h4 { color: var(--gold); margin-bottom: 0.9rem; font-size: 0.95rem; }
+  .pf-login-row { display:flex; gap:0.6rem; flex-wrap:wrap; }
+  .pf-login-msg { margin-top: 0.5rem; font-size: 0.82rem; color: #f87171; }
+
+  @media (max-width: 700px) {
+    .pf-navbar { padding: 0.8rem 1rem; }
+    .pf-nav-title { font-size: 0.95rem; }
+    .pf-back-btn { font-size: 0.8rem; padding: 0.45rem 0.8rem; }
+    .pf-page-inner { padding: 2rem 1rem 3rem; }
+    .pf-page-hero h1 { font-size: 2rem; }
+    .pf-grid { grid-template-columns: 1fr; }
+  }
+
   @media (max-width: 900px) {
     .hero {
       grid-template-columns: 1fr;
@@ -477,9 +678,61 @@
     .stat-card { padding: 0.6rem 0.9rem; }
     .nav-logo { font-size: 1rem; }
   }
+
+  /* ── Play button overlay on cards ── */
+  .pf-play-btn {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; color: rgba(255,255,255,0.9);
+    background: rgba(0,0,0,0.25);
+    opacity: 0; transition: opacity 0.2s;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+    pointer-events: none;
+  }
+  .pf-zoom-btn { font-size: 2rem; }
+  .pf-card-media:hover .pf-play-btn { opacity: 1; }
+  .pf-card-media { cursor: pointer; }
+
+  /* ── Lightbox ── */
+  #pfLightbox {
+    display: none; position: fixed; inset: 0; z-index: 900;
+    background: rgba(0,0,0,0.92);
+    align-items: center; justify-content: center;
+    padding: 1rem;
+    animation: lbFadeIn 0.2s ease;
+  }
+  #pfLightbox.active { display: flex; }
+  @keyframes lbFadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  #pfLbInner {
+    width: 100%; max-width: 960px;
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  #pfLbHeader {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  #pfLbTitle {
+    color: #fff; font-weight: 600; font-size: 1rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;
+  }
+  #pfLbClose {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; width: 36px; height: 36px; border-radius: 50%;
+    font-size: 1.1rem; cursor: pointer; transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  #pfLbClose:hover { background: rgba(239,68,68,0.7); }
+  #pfLbContent {
+    width: 100%; aspect-ratio: 16/9;
+    background: #000; border-radius: 12px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
 </style>
 </head>
 <body>
+
+<div id="mainSite">
 
 <!-- NAV -->
 <nav>
@@ -506,6 +759,7 @@
     </p>
     <div class="hero-cta">
       <a href="#experience" class="btn btn-primary">View My Work</a>
+      <button onclick="openPortfolio()" class="btn btn-portfolio">Portfolio</button>
       <a href="#contact" class="btn btn-secondary">Get In Touch</a>
     </div>
   </div>
@@ -744,6 +998,118 @@
   <div class="footer-dec">Peer Leader · 3D Artist · Community Advocate</div>
 </footer>
 
+</div><!-- /mainSite -->
+
+<!-- ═══ PORTFOLIO FULL PAGE (outside mainSite) ═══ -->
+<div id="pfPage">
+
+  <!-- Portfolio Navbar -->
+  <div class="pf-navbar">
+    <button class="pf-back-btn" onclick="closePortfolio()">
+      <span class="pf-back-arrow">←</span> Back to Home
+    </button>
+    <div class="pf-nav-title">Mir Muhammad <span>Riyad</span></div>
+    <button class="pf-admin-btn" onclick="toggleAdminArea()">⚙ Admin</button>
+  </div>
+
+  <div class="pf-page-inner">
+
+    <!-- Page hero -->
+    <div class="pf-page-hero">
+      <h1>My <span>Portfolio</span></h1>
+      <p>3D Animations, Blender works & creative projects</p>
+    </div>
+
+    <!-- LOGIN BOX -->
+    <div class="pf-login" id="pfLogin">
+      <h4>🔐 Admin Login</h4>
+      <div class="pf-login-row">
+        <input class="pf-input" type="password" id="pfPasswordInput" placeholder="Enter admin password" />
+        <button class="pf-add-btn" onclick="doAdminLogin()">Login</button>
+      </div>
+      <div class="pf-login-msg" id="pfLoginMsg"></div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="pf-admin-panel" id="pfAdminPanel">
+      <div class="pf-admin-title">⚙ Admin Panel — Add New Content</div>
+
+      <div class="pf-type-tabs">
+        <button class="pf-tab" id="tabVideo" onclick="switchTab('video')">🎬 Video File</button>
+        <button class="pf-tab active" id="tabYt" onclick="switchTab('youtube')">▶ YouTube</button>
+        <button class="pf-tab" id="tabImg" onclick="switchTab('image')">🖼 Image URL</button>
+      </div>
+
+      <!-- Video upload -->
+      <div id="tabPanelVideo" style="display:none;">
+        <div class="pf-form-row">
+          <input class="pf-input" type="text" id="pfVidTitle" placeholder="Title (e.g. Blender Animation 1)" />
+          <input class="pf-input" type="text" id="pfVidDesc"  placeholder="Short description (optional)" />
+        </div>
+        <div class="pf-form-row">
+          <input class="pf-input" type="file" id="pfVidFile" accept="video/*" style="padding:0.45rem 0.7rem;" />
+          <button class="pf-add-btn" onclick="addVideoFile()">+ Add</button>
+        </div>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">⚠ Video file শুধু এই device এ দেখা যাবে। সবার জন্য YouTube tab ব্যবহার করুন।</p>
+      </div>
+
+      <!-- YouTube -->
+      <div id="tabPanelYoutube">
+        <div class="pf-form-row">
+          <input class="pf-input" type="text" id="pfYtTitle" placeholder="Title" />
+          <input class="pf-input" type="text" id="pfYtDesc"  placeholder="Description (optional)" />
+        </div>
+        <div class="pf-form-row">
+          <input class="pf-input" type="text" id="pfYtUrl" placeholder="YouTube URL or Video ID" />
+          <button class="pf-add-btn" onclick="addYoutube()">+ Add</button>
+        </div>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ YouTube Unlisted video সবাই দেখতে পাবে। সবচেয়ে ভালো option।</p>
+      </div>
+
+      <!-- Image URL -->
+      <div id="tabPanelImage" style="display:none;">
+        <div class="pf-form-row">
+          <input class="pf-input" type="text" id="pfImgTitle" placeholder="Title" />
+          <input class="pf-input" type="text" id="pfImgDesc"  placeholder="Description (optional)" />
+        </div>
+        <div class="pf-form-row">
+          <input class="pf-input" type="text" id="pfImgUrl" placeholder="Image URL (e.g. https://i.imgur.com/...)" />
+          <button class="pf-add-btn" onclick="addImageUrl()">+ Add</button>
+        </div>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Imgur বা Google Drive এ upload করে link দাও — সবাই দেখতে পাবে।</p>
+      </div>
+
+      <div class="pf-item-list" id="pfItemList"></div>
+      <div style="margin-top:0.8rem;">
+        <button onclick="adminLogout()" style="background:none;border:none;color:rgba(255,100,100,0.6);font-size:0.8rem;cursor:pointer;">Logout</button>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO GRID -->
+    <div class="pf-grid" id="pfGrid"></div>
+    <div class="pf-empty" id="pfEmpty" style="display:none;">
+      No portfolio items yet.<br>Admin can add videos &amp; images.
+    </div>
+
+  </div><!-- /pf-page-inner -->
+
+  <footer style="text-align:center;padding:2rem;color:rgba(255,255,255,0.3);font-size:0.8rem;border-top:1px solid rgba(255,255,255,0.06);">
+    © 2025 Mir Muhammad Riyad · All rights reserved
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div id="pfLightbox" onclick="if(event.target===this)closeLightbox()">
+    <div id="pfLbInner">
+      <div id="pfLbHeader">
+        <span id="pfLbTitle"></span>
+        <button id="pfLbClose" onclick="closeLightbox()">✕</button>
+      </div>
+      <div id="pfLbContent"></div>
+    </div>
+  </div>
+
+</div><!-- /pfPage -->
+
 <script>
 // Scroll animation
 const observer = new IntersectionObserver((entries) => {
@@ -755,52 +1121,14 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-// Custom smooth scroll with professional easing
-function smoothScrollTo(targetY, duration) {
-  const startY = window.scrollY;
-  const diff = targetY - startY;
-  let startTime = null;
-
-  // Ease in-out cubic — same feel as professional sites
-  function easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
-
-  function step(timestamp) {
-    if (!startTime) startTime = timestamp;
-    const elapsed = timestamp - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const easedProgress = easeInOutCubic(progress);
-    window.scrollTo(0, startY + diff * easedProgress);
-    if (progress < 1) requestAnimationFrame(step);
-  }
-
-  requestAnimationFrame(step);
-}
-
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const targetId = link.getAttribute('href');
-    const target = document.querySelector(targetId);
-    if (target) {
-      const navHeight = document.querySelector('nav').offsetHeight;
-      const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
-      smoothScrollTo(targetTop, 900); // 900ms — smooth but not slow
-    }
-    closeMenuFn();
-  });
-});
-
-// Hamburger menu toggle
+// ── Hamburger menu ──
 const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
+const navLinks  = document.getElementById('navLinks');
 
-function closeMenuFn() {
-  if (navLinks && navLinks.classList.contains('open')) {
-    navLinks.classList.remove('open');
-    if (navToggle) navToggle.textContent = '☰';
-  }
+function closeMenu() {
+  if (!navLinks || !navLinks.classList.contains('open')) return;
+  navLinks.classList.remove('open');
+  if (navToggle) navToggle.textContent = '☰';
 }
 
 if (navToggle && navLinks) {
@@ -810,15 +1138,320 @@ if (navToggle && navLinks) {
   });
 }
 
-// Scroll করলে menu animated হয়ে hide হয়ে যাবে
+// Scroll হলে menu slide up করে hide হবে
 let lastScrollY = window.scrollY;
 window.addEventListener('scroll', () => {
-  const currentScrollY = window.scrollY;
-  if (Math.abs(currentScrollY - lastScrollY) > 10) {
-    closeMenuFn();
-    lastScrollY = currentScrollY;
+  if (Math.abs(window.scrollY - lastScrollY) > 8) {
+    closeMenu();
+    lastScrollY = window.scrollY;
   }
 }, { passive: true });
+
+// ── Professional smooth scroll (easeInOutCubic) ──
+function smoothScrollTo(targetY, duration) {
+  const startY = window.scrollY;
+  const diff   = targetY - startY;
+  let startTime = null;
+
+  function ease(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    const progress = Math.min((ts - startTime) / duration, 1);
+    window.scrollTo(0, startY + diff * ease(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    closeMenu();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (!target) return;
+    const navHeight = document.querySelector('nav').offsetHeight;
+    const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+    smoothScrollTo(top, 900);
+  });
+});
+
+// ══════════════════════════════════════════
+// PORTFOLIO FULL-PAGE SYSTEM
+// ══════════════════════════════════════════
+const PF_KEY     = 'pf_items_v2';
+const ADMIN_PASS = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
+
+let pfItems      = [];
+let pfIsAdmin    = false;
+let pfCurrentTab = 'youtube';
+
+// ── Persist (localStorage — data stays in your browser) ──
+function pfLoad() {
+  try { pfItems = JSON.parse(localStorage.getItem(PF_KEY) || '[]'); }
+  catch(e) { pfItems = []; }
+}
+function pfSave() {
+  try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
+}
+
+// ── DOM shortcuts ──
+const mainSite = () => document.getElementById('mainSite');
+const pfPage   = () => document.getElementById('pfPage');
+
+// ── History API: browser back button support ──
+function openPortfolio() {
+  pfLoad();
+  mainSite().style.display = 'none';
+  pfPage().classList.add('active');
+  pfPage().scrollTop = 0;
+  window.scrollTo(0, 0);
+  document.body.style.overflow = '';
+  document.getElementById('pfLogin').classList.remove('active');
+  document.getElementById('pfAdminPanel').classList.remove('active');
+  pfIsAdmin = false;
+  history.pushState({ portfolio: true }, '', '#portfolio');
+  renderGrid();
+}
+
+function closePortfolio() {
+  document.querySelectorAll('#pfGrid video').forEach(v => v.pause());
+  closeLightbox();
+  pfPage().classList.remove('active');
+  mainSite().style.display = '';
+  window.scrollTo(0, 0);
+  if (location.hash === '#portfolio') history.pushState({}, '', location.pathname);
+}
+
+// Browser back/forward
+window.addEventListener('popstate', e => {
+  if (pfPage().classList.contains('active') && location.hash !== '#portfolio') {
+    document.querySelectorAll('#pfGrid video').forEach(v => v.pause());
+    closeLightbox();
+    pfPage().classList.remove('active');
+    mainSite().style.display = '';
+    window.scrollTo(0, 0);
+  }
+});
+
+// ── Admin toggle ──
+function toggleAdminArea() {
+  if (pfIsAdmin) {
+    document.getElementById('pfAdminPanel').classList.toggle('active');
+    return;
+  }
+  const login = document.getElementById('pfLogin');
+  login.classList.toggle('active');
+  if (login.classList.contains('active'))
+    setTimeout(() => document.getElementById('pfPasswordInput').focus(), 80);
+}
+
+function doAdminLogin() {
+  const val = document.getElementById('pfPasswordInput').value;
+  const msg = document.getElementById('pfLoginMsg');
+  if (val === ADMIN_PASS) {
+    pfIsAdmin = true;
+    document.getElementById('pfLogin').classList.remove('active');
+    document.getElementById('pfAdminPanel').classList.add('active');
+    document.getElementById('pfPasswordInput').value = '';
+    msg.textContent = '';
+    renderAdminList();
+    renderGrid();
+  } else {
+    msg.textContent = '✗ Wrong password. Try again.';
+    document.getElementById('pfPasswordInput').value = '';
+    document.getElementById('pfPasswordInput').focus();
+  }
+}
+
+document.getElementById('pfPasswordInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doAdminLogin();
+});
+
+function adminLogout() {
+  pfIsAdmin = false;
+  document.getElementById('pfAdminPanel').classList.remove('active');
+  renderGrid();
+}
+
+// ── Tab switching ──
+function switchTab(tab) {
+  pfCurrentTab = tab;
+  const tabMap   = { video: 'tabVideo', youtube: 'tabYt', image: 'tabImg' };
+  const panelMap = { video: 'tabPanelVideo', youtube: 'tabPanelYoutube', image: 'tabPanelImage' };
+  Object.keys(tabMap).forEach(t => {
+    document.getElementById(tabMap[t]).classList.toggle('active', t === tab);
+    document.getElementById(panelMap[t]).style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+// ── Add YouTube (recommended — works for everyone) ──
+function addYoutube() {
+  const title = document.getElementById('pfYtTitle').value.trim() || 'YouTube Video';
+  const desc  = document.getElementById('pfYtDesc').value.trim();
+  let   url   = document.getElementById('pfYtUrl').value.trim();
+  if (!url) { alert('Please enter a YouTube URL or Video ID.'); return; }
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+  const vid = m ? m[1] : url;
+  pfItems.unshift({ id: Date.now(), type: 'youtube', title, desc, src: vid });
+  pfSave(); renderGrid(); renderAdminList();
+  ['pfYtTitle','pfYtDesc','pfYtUrl'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── Add Image URL ──
+function addImageUrl() {
+  const title = document.getElementById('pfImgTitle').value.trim() || 'Image';
+  const desc  = document.getElementById('pfImgDesc').value.trim();
+  const url   = document.getElementById('pfImgUrl').value.trim();
+  if (!url) { alert('Please enter an image URL.'); return; }
+  pfItems.unshift({ id: Date.now(), type: 'image', title, desc, src: url });
+  pfSave(); renderGrid(); renderAdminList();
+  document.getElementById('pfImgTitle').value = '';
+  document.getElementById('pfImgDesc').value  = '';
+  document.getElementById('pfImgUrl').value   = '';
+}
+
+// ── Add Video File (local — only visible on this device) ──
+function addVideoFile() {
+  const title = document.getElementById('pfVidTitle').value.trim() || 'Video';
+  const desc  = document.getElementById('pfVidDesc').value.trim();
+  const file  = document.getElementById('pfVidFile').files[0];
+  if (!file) { alert('Please select a video file.'); return; }
+  const btn = document.querySelector('#tabPanelVideo .pf-add-btn');
+  btn.textContent = 'Loading…'; btn.disabled = true;
+  const reader = new FileReader();
+  reader.onload = e => {
+    pfItems.unshift({ id: Date.now(), type: 'video', title, desc, src: e.target.result });
+    pfSave(); renderGrid(); renderAdminList();
+    document.getElementById('pfVidTitle').value = '';
+    document.getElementById('pfVidDesc').value  = '';
+    document.getElementById('pfVidFile').value  = '';
+    btn.textContent = '+ Add'; btn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Delete ──
+function deleteItem(id) {
+  if (!confirm('Delete this item?')) return;
+  pfItems = pfItems.filter(i => i.id !== id);
+  pfSave(); renderGrid(); renderAdminList();
+}
+
+// ══════════════════════════════════════════
+// LIGHTBOX — click to play full screen
+// ══════════════════════════════════════════
+let lbOpen = false;
+
+function openLightbox(item) {
+  const lb = document.getElementById('pfLightbox');
+  const lbContent = document.getElementById('pfLbContent');
+  lbContent.innerHTML = '';
+
+  if (item.type === 'youtube') {
+    lbContent.innerHTML = `
+      <iframe src="https://www.youtube.com/embed/${item.src}?autoplay=1&rel=0"
+        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+        allowfullscreen style="width:100%;height:100%;border:none;display:block;border-radius:12px;"></iframe>`;
+  } else if (item.type === 'video') {
+    lbContent.innerHTML = `
+      <video controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:12px;background:#000;">
+        <source src="${item.src}" type="video/mp4">
+      </video>`;
+  } else {
+    lbContent.innerHTML = `
+      <img src="${item.src}" alt="${item.title}"
+        style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;display:block;margin:auto;">`;
+  }
+
+  document.getElementById('pfLbTitle').textContent = item.title;
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  lbOpen = true;
+}
+
+function closeLightbox() {
+  if (!lbOpen) return;
+  const lb = document.getElementById('pfLightbox');
+  lb.classList.remove('active');
+  document.getElementById('pfLbContent').innerHTML = '';
+  document.body.style.overflow = '';
+  lbOpen = false;
+}
+
+// ── Render grid ──
+function renderGrid() {
+  const grid  = document.getElementById('pfGrid');
+  const empty = document.getElementById('pfEmpty');
+  grid.innerHTML = '';
+  if (!pfItems.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  pfItems.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'pf-card';
+
+    let thumb = '';
+    if (item.type === 'youtube') {
+      thumb = `<img src="https://img.youtube.com/vi/${item.src}/mqdefault.jpg"
+                 alt="${item.title}" style="width:100%;height:100%;object-fit:cover;display:block;">
+               <div class="pf-play-btn">▶</div>`;
+    } else if (item.type === 'video') {
+      thumb = `<video preload="metadata" muted style="width:100%;height:100%;object-fit:cover;display:block;">
+                 <source src="${item.src}" type="video/mp4">
+               </video>
+               <div class="pf-play-btn">▶</div>`;
+    } else {
+      thumb = `<img src="${item.src}" alt="${item.title}" loading="lazy"
+                 style="width:100%;height:100%;object-fit:cover;display:block;">
+               <div class="pf-play-btn pf-zoom-btn">🔍</div>`;
+    }
+
+    const delBtn = pfIsAdmin
+      ? `<button class="pf-card-del" onclick="event.stopPropagation();deleteItem(${item.id})" title="Delete">×</button>`
+      : '';
+
+    card.innerHTML = `
+      <div class="pf-card-media">${thumb}${delBtn}</div>
+      <div class="pf-card-info">
+        <div class="pf-card-title">${item.title}</div>
+        ${item.desc ? `<div class="pf-card-desc">${item.desc}</div>` : ''}
+      </div>`;
+
+    card.querySelector('.pf-card-media').addEventListener('click', () => openLightbox(item));
+    grid.appendChild(card);
+  });
+}
+
+// ── Render admin list ──
+function renderAdminList() {
+  const list = document.getElementById('pfItemList');
+  list.innerHTML = '';
+  if (!pfItems.length) {
+    list.innerHTML = '<div style="color:rgba(255,255,255,0.28);font-size:0.82rem;padding:0.3rem 0;">No items yet.</div>';
+    return;
+  }
+  pfItems.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'pf-item-row';
+    const icon = item.type === 'youtube' ? '▶' : item.type === 'image' ? '🖼' : '🎬';
+    row.innerHTML = `<span>${icon} ${item.title}</span>
+      <button class="pf-del-btn" onclick="deleteItem(${item.id})">Delete</button>`;
+    list.appendChild(row);
+  });
+}
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (lbOpen) { closeLightbox(); return; }
+    if (pfPage().classList.contains('active')) closePortfolio();
+  }
+});
+
 </script>
 </body>
 </html>
