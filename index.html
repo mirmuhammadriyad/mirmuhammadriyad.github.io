@@ -514,13 +514,8 @@
   /* grid */
   .pf-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-  }
-  @media (max-width: 600px) {
-    .pf-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .pf-page-inner { padding: 1.5rem 1rem 3rem; }
-    .pf-page-hero h1 { font-size: 2rem; }
   }
   .pf-card {
     background: rgba(255,255,255,0.04);
@@ -536,13 +531,10 @@
   .pf-card-media {
     width: 100%; aspect-ratio: 16/9;
     background: #050e1c; position: relative;
-    overflow: hidden;
   }
   .pf-card-media video,
   .pf-card-media img   { width:100%; height:100%; object-fit:cover; display:block; }
   .pf-card-media iframe { width:100%; height:100%; border:none; display:block; }
-  /* Delete button stays above iframe */
-  .pf-card-del { z-index: 10; }
   .pf-card-info { padding: 0.9rem 1.1rem; }
   .pf-card-title { color:#fff; font-weight:600; font-size:0.95rem; margin-bottom:0.25rem; }
   .pf-card-desc  { color:rgba(255,255,255,0.42); font-size:0.82rem; }
@@ -739,6 +731,84 @@
     background: #000; border-radius: 12px; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
   }
+
+  /* ── Play overlay on cards ── */
+  .pf-play-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.18);
+    transition: background 0.22s;
+  }
+  .pf-card-media:hover .pf-play-overlay { background: rgba(0,0,0,0.38); }
+  .pf-play-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(13,148,136,0.85);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+    transition: transform 0.2s, background 0.2s;
+  }
+  .pf-card-media:hover .pf-play-circle {
+    transform: scale(1.12);
+    background: var(--teal-light);
+  }
+
+  /* ── Video Modal ── */
+  #pfVideoModal {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  #pfVideoModal.active { display: flex; }
+  #pfModalOverlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(6px);
+    animation: lbFadeIn 0.2s ease;
+  }
+  #pfModalBox {
+    position: relative; z-index: 2;
+    width: min(880px, 96vw);
+    background: #08111f;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+    animation: modalSlideUp 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes modalSlideUp {
+    from { opacity:0; transform: translateY(30px) scale(0.97); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+  #pfModalHeader {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.2rem;
+    background: #0d1a2e;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  #pfModalTitle {
+    color: #fff; font-weight: 600; font-size: 0.95rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: calc(100% - 48px);
+  }
+  #pfModalClose {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; width: 34px; height: 34px; border-radius: 50%;
+    font-size: 1rem; cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  #pfModalClose:hover { background: rgba(239,68,68,0.75); border-color: transparent; }
+  #pfModalPlayer {
+    width: 100%; aspect-ratio: 16/9;
+    background: #000;
+  }
+  #pfModalFrame {
+    width: 100%; height: 100%; border: none; display: block;
+  }
+  @media (max-width: 600px) {
+    #pfModalBox { border-radius: 10px; }
+    #pfModalHeader { padding: 0.65rem 0.9rem; }
+    #pfModalTitle { font-size: 0.85rem; }
+  }
+
 </style>
 </head>
 <body>
@@ -1119,6 +1189,21 @@
     </div>
   </div>
 
+
+  <!-- VIDEO MODAL (clean player) -->
+  <div id="pfVideoModal">
+    <div id="pfModalOverlay"></div>
+    <div id="pfModalBox">
+      <div id="pfModalHeader">
+        <span id="pfModalTitle"></span>
+        <button id="pfModalClose">&#x2715;</button>
+      </div>
+      <div id="pfModalPlayer">
+        <iframe id="pfModalFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /pfPage -->
 
 <script>
@@ -1193,96 +1278,20 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 // ══════════════════════════════════════════
 // PORTFOLIO FULL-PAGE SYSTEM
 // ══════════════════════════════════════════
-const ADMIN_PASS    = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
-const SHARED_KEY    = 'pf_youtube_items';   // shared across all devices via window.storage
-const LOCAL_KEY     = 'pf_local_items';     // local-only blobs (IndexedDB)
-const DB_NAME       = 'PortfolioDB';
-const DB_VERSION    = 1;
-const STORE_BLOB    = 'pf_blobs';
+const PF_KEY     = 'pf_items_v2';
+const ADMIN_PASS = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
 
-let pfItems      = [];   // all items merged (youtube shared + local blobs)
+let pfItems      = [];
 let pfIsAdmin    = false;
 let pfCurrentTab = 'youtube';
-let _db          = null;
 
-// ── IndexedDB (for local video/image blobs only) ──
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if (_db) { resolve(_db); return; }
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_BLOB))
-        db.createObjectStore(STORE_BLOB, { keyPath: 'id' });
-    };
-    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
-    req.onerror   = e => reject(e.target.error);
-  });
+// ── Persist (localStorage — data stays in your browser) ──
+function pfLoad() {
+  try { pfItems = JSON.parse(localStorage.getItem(PF_KEY) || '[]'); }
+  catch(e) { pfItems = []; }
 }
-
-// ── Save ──
-// YouTube/image-url items → window.storage (shared, all devices see them)
-// Local video/image blobs → IndexedDB (this device only)
-async function pfSave() {
-  try {
-    // 1. Shared items (youtube + image-url) → window.storage
-    const sharedItems = pfItems
-      .filter(i => i.type === 'youtube' || i.type === 'image-url')
-      .map(i => ({ id: i.id, type: i.type, title: i.title, desc: i.desc, src: i.src }));
-    if (window.storage) {
-      await window.storage.set(SHARED_KEY, JSON.stringify(sharedItems), true);
-    }
-
-    // 2. Local blob items → IndexedDB
-    const db       = await openDB();
-    const blobTx   = db.transaction(STORE_BLOB, 'readwrite');
-    const blobStore = blobTx.objectStore(STORE_BLOB);
-    blobStore.clear();
-    for (const item of pfItems) {
-      if ((item.type === 'video' || item.type === 'image') && item.src) {
-        blobStore.put({ id: item.id, type: item.type, title: item.title, desc: item.desc, src: item.src });
-      }
-    }
-    await new Promise((res, rej) => { blobTx.oncomplete = res; blobTx.onerror = rej; });
-  } catch(e) { console.error('pfSave error:', e); }
-}
-
-// ── Load ──
-// Merges shared (all-device) items + local blobs
-async function pfLoad() {
-  try {
-    // 1. Shared items from window.storage
-    let sharedItems = [];
-    if (window.storage) {
-      try {
-        const res = await window.storage.get(SHARED_KEY, true);
-        if (res && res.value) sharedItems = JSON.parse(res.value);
-      } catch(e) { sharedItems = []; }
-    }
-
-    // 2. Local blob items from IndexedDB
-    let localItems = [];
-    try {
-      const db     = await openDB();
-      localItems   = await new Promise((res, rej) => {
-        const tx  = db.transaction(STORE_BLOB, 'readonly');
-        const req = tx.objectStore(STORE_BLOB).getAll();
-        req.onsuccess = () => res(req.result);
-        req.onerror   = () => rej(req.error);
-      });
-    } catch(e) { localItems = []; }
-
-    // Merge: shared first, then local; deduplicate by id
-    const seen = new Set();
-    pfItems = [...sharedItems, ...localItems].filter(i => {
-      if (seen.has(i.id)) return false;
-      seen.add(i.id); return true;
-    });
-    pfItems.sort((a, b) => b.id - a.id);
-  } catch(e) {
-    console.error('pfLoad error:', e);
-    pfItems = [];
-  }
+function pfSave() {
+  try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
 }
 
 // ── DOM shortcuts ──
@@ -1290,7 +1299,8 @@ const mainSite = () => document.getElementById('mainSite');
 const pfPage   = () => document.getElementById('pfPage');
 
 // ── History API: browser back button support ──
-async function openPortfolio() {
+function openPortfolio() {
+  pfLoad();
   mainSite().style.display = 'none';
   pfPage().classList.add('active');
   pfPage().scrollTop = 0;
@@ -1300,10 +1310,6 @@ async function openPortfolio() {
   document.getElementById('pfAdminPanel').classList.remove('active');
   pfIsAdmin = false;
   history.pushState({ portfolio: true }, '', '#portfolio');
-  // Show loading state while DB loads
-  document.getElementById('pfGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,0.4);padding:4rem">Loading…</div>';
-  document.getElementById('pfEmpty').style.display = 'none';
-  await pfLoad();
   renderGrid();
 }
 
@@ -1379,7 +1385,7 @@ function switchTab(tab) {
 }
 
 // ── Add YouTube (recommended — works for everyone) ──
-async function addYoutube() {
+function addYoutube() {
   const title = document.getElementById('pfYtTitle').value.trim() || 'YouTube Video';
   const desc  = document.getElementById('pfYtDesc').value.trim();
   let   url   = document.getElementById('pfYtUrl').value.trim();
@@ -1387,36 +1393,35 @@ async function addYoutube() {
   const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   const vid = m ? m[1] : url;
   pfItems.unshift({ id: Date.now(), type: 'youtube', title, desc, src: vid });
-  await pfSave(); renderGrid(); renderAdminList();
+  pfSave(); renderGrid(); renderAdminList();
   ['pfYtTitle','pfYtDesc','pfYtUrl'].forEach(id => document.getElementById(id).value = '');
 }
 
 // ── Add Image URL ──
-async function addImageUrl() {
+function addImageUrl() {
   const title = document.getElementById('pfImgTitle').value.trim() || 'Image';
   const desc  = document.getElementById('pfImgDesc').value.trim();
   const url   = document.getElementById('pfImgUrl').value.trim();
   if (!url) { alert('Please enter an image URL.'); return; }
-  pfItems.unshift({ id: Date.now(), type: 'image-url', title, desc, src: url });
-  await pfSave(); renderGrid(); renderAdminList();
+  pfItems.unshift({ id: Date.now(), type: 'image', title, desc, src: url });
+  pfSave(); renderGrid(); renderAdminList();
   document.getElementById('pfImgTitle').value = '';
   document.getElementById('pfImgDesc').value  = '';
   document.getElementById('pfImgUrl').value   = '';
 }
 
-// ── Add Video File (stored in IndexedDB — unlimited size) ──
+// ── Add Video File (local — only visible on this device) ──
 function addVideoFile() {
   const title = document.getElementById('pfVidTitle').value.trim() || 'Video';
   const desc  = document.getElementById('pfVidDesc').value.trim();
   const file  = document.getElementById('pfVidFile').files[0];
   if (!file) { alert('Please select a video file.'); return; }
   const btn = document.querySelector('#tabPanelVideo .pf-add-btn');
-  btn.textContent = 'Saving…'; btn.disabled = true;
+  btn.textContent = 'Loading…'; btn.disabled = true;
   const reader = new FileReader();
-  reader.onload = async e => {
+  reader.onload = e => {
     pfItems.unshift({ id: Date.now(), type: 'video', title, desc, src: e.target.result });
-    await pfSave();
-    renderGrid(); renderAdminList();
+    pfSave(); renderGrid(); renderAdminList();
     document.getElementById('pfVidTitle').value = '';
     document.getElementById('pfVidDesc').value  = '';
     document.getElementById('pfVidFile').value  = '';
@@ -1426,10 +1431,10 @@ function addVideoFile() {
 }
 
 // ── Delete ──
-async function deleteItem(id) {
+function deleteItem(id) {
   if (!confirm('Delete this item?')) return;
   pfItems = pfItems.filter(i => i.id !== id);
-  await pfSave(); renderGrid(); renderAdminList();
+  pfSave(); renderGrid(); renderAdminList();
 }
 
 // ══════════════════════════════════════════
@@ -1452,7 +1457,7 @@ function openLightbox(item) {
       <video controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:12px;background:#000;">
         <source src="${item.src}" type="video/mp4">
       </video>`;
-  } else if (item.type === 'image' || item.type === 'image-url') {
+  } else {
     lbContent.innerHTML = `
       <img src="${item.src}" alt="${item.title}"
         style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;display:block;margin:auto;">`;
@@ -1473,6 +1478,32 @@ function closeLightbox() {
   lbOpen = false;
 }
 
+// ── Video Modal (clean full-page player) ──
+let modalOpen = false;
+
+function openVideoModal(item) {
+  const modal = document.getElementById('pfVideoModal');
+  const frame = document.getElementById('pfModalFrame');
+  const title = document.getElementById('pfModalTitle');
+
+  // Autoplay + rel=0 + modestbranding for cleanest look
+  frame.src = `https://www.youtube.com/embed/${item.src}?autoplay=1&rel=0&modestbranding=1&color=white&iv_load_policy=3`;
+  title.textContent = item.title;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  modalOpen = true;
+}
+
+function closeVideoModal() {
+  if (!modalOpen) return;
+  const modal = document.getElementById('pfVideoModal');
+  const frame = document.getElementById('pfModalFrame');
+  frame.src = '';   // stop video playback
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  modalOpen = false;
+}
+
 // ── Render grid ──
 function renderGrid() {
   const grid  = document.getElementById('pfGrid');
@@ -1489,16 +1520,20 @@ function renderGrid() {
     mediaDiv.className = 'pf-card-media';
 
     if (item.type === 'youtube') {
-      // Direct embed — works on every device, no click needed to play
+      const hq = `https://img.youtube.com/vi/${item.src}/maxresdefault.jpg`;
+      const mq = `https://img.youtube.com/vi/${item.src}/hqdefault.jpg`;
       mediaDiv.innerHTML = `
-        <iframe
-          src="https://www.youtube.com/embed/${item.src}?rel=0&modestbranding=1"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen
-          loading="lazy"
-          style="width:100%;height:100%;border:none;display:block;border-radius:0;">
-        </iframe>`;
-      // Iframe handles its own click, no lightbox needed for youtube cards
+        <img src="${hq}" onerror="this.src='${mq}'" alt="${item.title}"
+          style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
+        <div class="pf-play-overlay">
+          <div class="pf-play-circle">
+            <svg viewBox="0 0 24 24" fill="white" width="40" height="40" style="margin-left:4px">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>`;
+      mediaDiv.style.cursor = 'pointer';
+      mediaDiv.addEventListener('click', () => openVideoModal(item));
     } else if (item.type === 'video') {
       mediaDiv.innerHTML = `
         <video controls preload="metadata"
@@ -1506,11 +1541,17 @@ function renderGrid() {
           <source src="${item.src}" type="video/mp4">
         </video>`;
     } else {
-      // image or image-url
       mediaDiv.innerHTML = `
         <img src="${item.src}" alt="${item.title}" loading="lazy"
-          style="width:100%;height:100%;object-fit:cover;display:block;">
-        <div class="pf-play-btn pf-zoom-btn">🔍</div>`;
+          style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
+        <div class="pf-play-overlay">
+          <div class="pf-play-circle" style="background:rgba(0,0,0,0.45);">
+            <svg viewBox="0 0 24 24" fill="white" width="30" height="30" style="margin-left:3px">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>`;
+      mediaDiv.style.cursor = 'pointer';
       mediaDiv.addEventListener('click', () => openLightbox(item));
     }
 
@@ -1545,7 +1586,7 @@ function renderAdminList() {
   pfItems.forEach(item => {
     const row = document.createElement('div');
     row.className = 'pf-item-row';
-    const icon = item.type === 'youtube' ? '▶' : (item.type === 'image' || item.type === 'image-url') ? '🖼' : '🎬';
+    const icon = item.type === 'youtube' ? '▶' : item.type === 'image' ? '🖼' : '🎬';
     const delBtn = document.createElement('button');
     delBtn.className = 'pf-del-btn';
     delBtn.textContent = 'Delete';
@@ -1559,6 +1600,7 @@ function renderAdminList() {
 // ── Keyboard shortcuts ──
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
+    if (modalOpen) { closeVideoModal(); return; }
     if (lbOpen) { closeLightbox(); return; }
     if (pfPage().classList.contains('active')) closePortfolio();
   }
@@ -1590,6 +1632,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Lightbox close
   document.getElementById('pfLbClose').addEventListener('click', closeLightbox);
+
+  // Video modal
+  document.getElementById('pfModalClose').addEventListener('click', closeVideoModal);
+  document.getElementById('pfModalOverlay').addEventListener('click', closeVideoModal);
   document.getElementById('pfLightbox').addEventListener('click', e => {
     if (e.target === document.getElementById('pfLightbox')) closeLightbox();
   });
