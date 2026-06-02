@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mir Muhammad Riyad — Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
 <style>
   :root {
     --navy: #0a1628;
@@ -988,7 +987,7 @@
 </head>
 <body>
 
-<div id="mainSite">
+<div id="mainSite" style="display: none;">
 
 <!-- NAV -->
 <nav>
@@ -1012,7 +1011,7 @@
   <div class="hero-text">
     <div class="hero-badge">Peer Leader · 3D Artist · Community Worker</div>
     <h1>Mir Muhammad<span>Riyad</span></h1>
-    <p class="hero-tagline">UNICEF Peer Leader & Aspiring 3D Artist from Bangladesh</p>
+    <p class="hero-tagline">UNICEF Peer Leader &amp; Aspiring 3D Artist from Bangladesh</p>
     <p class="hero-desc">
       A passionate community leader with 2+ years of experience working in UNICEF's child protection projects. 
       I educate peers on child safety, mental health, and life skills — while pursuing my creative side through 3D modelling in Blender.
@@ -1190,7 +1189,7 @@
       <div class="skill-tags">
         <span class="skill-tag">Child Protection</span>
         <span class="skill-tag">Mental Health Awareness</span>
-        <span class="skill-tag">3D Art & Design</span>
+        <span class="skill-tag">3D Art &amp; Design</span>
         <span class="skill-tag">Youth Development</span>
       </div>
     </div>
@@ -1261,7 +1260,7 @@
 </div><!-- /mainSite -->
 
 <!-- ═══ PORTFOLIO FULL PAGE (outside mainSite) ═══ -->
-<div id="pfPage">
+<div id="pfPage" class="active">
 
   <!-- Portfolio Navbar -->
   <div class="pf-navbar">
@@ -1277,21 +1276,21 @@
     <!-- Page hero -->
     <div class="pf-page-hero">
       <h1>My <span>Portfolio</span></h1>
-      <p>3D Animations, Blender works & creative projects</p>
+      <p>3D Animations, Blender works &amp; creative projects</p>
     </div>
 
     <!-- LOGIN BOX -->
     <div class="pf-login" id="pfLogin">
       <h4>🔐 Admin Login</h4>
       <div class="pf-login-row">
-        <input class="pf-input" type="password" id="pfPasswordInput" placeholder="Enter admin password" />
+        <input class="pf-input" type="password" id="pfPasswordInput" placeholder="Enter admin password">
         <button class="pf-add-btn" id="btnDoLogin">Login</button>
       </div>
       <div class="pf-login-msg" id="pfLoginMsg"></div>
     </div>
 
     <!-- ADMIN PANEL -->
-    <div class="pf-admin-panel" id="pfAdminPanel">
+    <div class="pf-admin-panel active" id="pfAdminPanel">
       <div class="pf-admin-title">⚙ Admin Panel — Add New Content</div>
 
       <div class="pf-type-tabs">
@@ -1302,11 +1301,11 @@
       <!-- Streamable -->
       <div id="tabPanelYoutube">
         <div class="pf-form-row">
-          <input class="pf-input" type="text" id="pfYtTitle" placeholder="Title" />
-          <input class="pf-input" type="text" id="pfYtDesc"  placeholder="Description (optional)" />
+          <input class="pf-input" type="text" id="pfYtTitle" placeholder="Title">
+          <input class="pf-input" type="text" id="pfYtDesc" placeholder="Description (optional)">
         </div>
         <div class="pf-form-row">
-          <input class="pf-input" type="text" id="pfYtUrl" placeholder="Streamable URL (e.g. https://streamable.com/abc123)" />
+          <input class="pf-input" type="text" id="pfYtUrl" placeholder="Streamable URL (e.g. https://streamable.com/abc123)">
           <button class="pf-add-btn" id="btnAddYoutube">+ Add</button>
         </div>
         <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Streamable এ upload করে link দাও — clean player, সবাই দেখতে পাবে।</p>
@@ -1315,29 +1314,35 @@
       <!-- Image URL -->
       <div id="tabPanelImage" style="display:none;">
         <div class="pf-form-row">
-          <input class="pf-input" type="text" id="pfImgTitle" placeholder="Title" />
-          <input class="pf-input" type="text" id="pfImgDesc"  placeholder="Description (optional)" />
+          <input class="pf-input" type="text" id="pfImgTitle" placeholder="Title">
+          <input class="pf-input" type="text" id="pfImgDesc" placeholder="Description (optional)">
         </div>
         <div class="pf-form-row">
-          <input class="pf-input" type="text" id="pfImgUrl" placeholder="Image URL (e.g. https://i.imgur.com/...)" />
+          <input class="pf-input" type="text" id="pfImgUrl" placeholder="Image URL (e.g. https://i.imgur.com/...)">
           <button class="pf-add-btn" id="btnAddImage">+ Add</button>
         </div>
         <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Imgur বা Google Drive এ upload করে link দাও — সবাই দেখতে পাবে।</p>
       </div>
 
-      <div class="pf-item-list" id="pfItemList"></div>
+      <div class="pf-item-list" id="pfItemList"><div class="pf-item-row"><span>▶ 222</span><button class="pf-del-btn">Delete</button></div><div class="pf-item-row"><span>▶ 111</span><button class="pf-del-btn">Delete</button></div></div>
       <div style="margin-top:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
         <button id="btnSaveDownload" style="background:var(--teal);border:none;color:#fff;font-size:0.85rem;font-weight:700;padding:0.6rem 1.2rem;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:0.5rem;">
           ⬇ Save &amp; Download File
         </button>
-        <div id="pfSaveHint" style="color:rgba(255,255,255,0.35);font-size:0.76rem;line-height:1.4;">Item add/delete করার পর এই button চাপো।<br>Download হওয়া file টা দিয়ে পুরনো index.html replace করো।</div>
+        <div id="pfSaveHint" style="color: rgba(255, 255, 255, 0.35); font-size: 0.76rem; line-height: 1.4;">Item add/delete করার পর এই button চাপো।<br>Download হওয়া file টা দিয়ে পুরনো index.html replace করো।</div>
         <button id="btnAdminLogout" style="background:none;border:none;color:rgba(255,100,100,0.5);font-size:0.8rem;cursor:pointer;margin-left:auto;">Logout</button>
       </div>
     </div>
 
     <!-- PORTFOLIO GRID -->
-    <div class="pf-grid" id="pfGrid"></div>
-    <div class="pf-empty" id="pfEmpty" style="display:none;">
+    <div class="pf-grid" id="pfGrid"><div class="pf-card"><div class="pf-card-media" style="cursor: pointer;">
+        <img src="https://cdn-cf-east.streamable.com/image/2cql24.jpg" onerror="this.src='https://cdn-cf-east.streamable.com/image/2cql24.png';this.onerror=null;" alt="222" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
+        <div class="pf-hover-hint">▶ Play</div><button class="pf-card-del" title="Delete">×</button></div><div class="pf-card-info"><div class="pf-card-title">222</div>
+      </div></div><div class="pf-card"><div class="pf-card-media" style="cursor: pointer;">
+        <img src="https://cdn-cf-east.streamable.com/image/tuo2ul.jpg" onerror="this.src='https://cdn-cf-east.streamable.com/image/tuo2ul.png';this.onerror=null;" alt="111" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
+        <div class="pf-hover-hint">▶ Play</div><button class="pf-card-del" title="Delete">×</button></div><div class="pf-card-info"><div class="pf-card-title">111</div>
+      </div></div></div>
+    <div class="pf-empty" id="pfEmpty" style="display: none;">
       No portfolio items yet.<br>Admin can add videos &amp; images.
     </div>
 
@@ -1365,7 +1370,7 @@
     <div id="pfModalBox">
       <div id="pfModalHeader">
         <span id="pfModalTitle"></span>
-        <button id="pfModalClose">&#x2715;</button>
+        <button id="pfModalClose">✕</button>
       </div>
       <div id="pfModalPlayer" class="paused">
         <!-- Streamable / video iframe loads here -->
@@ -1375,8 +1380,8 @@
           <div id="pfCtrlTop"></div>
           <div id="pfCtrlMiddle">
             <button id="pfCtrlPlay" class="pf-ctrl-btn pf-ctrl-big">
-              <svg id="pfPlayIcon" viewBox="0 0 24 24" fill="white" width="48" height="48"><path d="M8 5v14l11-7z"/></svg>
-              <svg id="pfPauseIcon" viewBox="0 0 24 24" fill="white" width="48" height="48" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <svg id="pfPlayIcon" viewBox="0 0 24 24" fill="white" width="48" height="48"><path d="M8 5v14l11-7z"></path></svg>
+              <svg id="pfPauseIcon" viewBox="0 0 24 24" fill="white" width="48" height="48" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
             </button>
           </div>
           <div id="pfCtrlBottom">
@@ -1389,18 +1394,18 @@
             <div id="pfCtrlRow">
               <div id="pfCtrlLeft">
                 <button id="pfCtrlPlay2" class="pf-ctrl-btn">
-                  <svg id="pfPlayIcon2" viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M8 5v14l11-7z"/></svg>
-                  <svg id="pfPauseIcon2" viewBox="0 0 24 24" fill="white" width="22" height="22" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                  <svg id="pfPlayIcon2" viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M8 5v14l11-7z"></path></svg>
+                  <svg id="pfPauseIcon2" viewBox="0 0 24 24" fill="white" width="22" height="22" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
                 </button>
                 <button id="pfCtrlMute" class="pf-ctrl-btn">
-                  <svg id="pfVolIcon" viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                  <svg id="pfMuteIcon" viewBox="0 0 24 24" fill="white" width="20" height="20" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                  <svg id="pfVolIcon" viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"></path></svg>
+                  <svg id="pfMuteIcon" viewBox="0 0 24 24" fill="white" width="20" height="20" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg>
                 </button>
                 <span id="pfCtrlTime">0:00 / 0:00</span>
               </div>
               <div id="pfCtrlRight">
                 <button id="pfCtrlFull" class="pf-ctrl-btn">
-                  <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>
                 </button>
               </div>
             </div>
@@ -1413,9 +1418,22 @@
 </div><!-- /pfPage -->
 
 <!-- ═══ PORTFOLIO DATA — baked into file, visible on ALL devices ═══ -->
-<script id="pf-data" type="application/json">
-[]
-</script>
+<script id="pf-data" type="application/json">[
+  {
+    "id": 1780380745062,
+    "type": "youtube",
+    "title": "222",
+    "desc": "",
+    "src": "https://streamable.com/2cql24"
+  },
+  {
+    "id": 1780380713246,
+    "type": "youtube",
+    "title": "111",
+    "desc": "",
+    "src": "https://streamable.com/tuo2ul"
+  }
+]</script>
 
 <script>
 // Scroll animation
@@ -1495,27 +1513,22 @@ let pfItems      = [];
 let pfIsAdmin    = false;
 let pfCurrentTab = 'youtube';
 
-// ── Storage: localStorage (instant) + pf-data block (for download) ──
-const PF_KEY = 'pf_items_v2';
-
+// ── Data lives inside the HTML file itself — works on ALL devices ──
 function pfLoad() {
   try {
-    const ls = localStorage.getItem(PF_KEY);
-    if (ls) { pfItems = JSON.parse(ls); return; }
     const el = document.getElementById('pf-data');
     pfItems = el ? JSON.parse(el.textContent.trim() || '[]') : [];
   } catch(e) { pfItems = []; }
 }
 
 function pfSave() {
-  try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
+  // Update the embedded data block so exportAndDownload() picks it up
   const el = document.getElementById('pf-data');
-  if (el) el.textContent = JSON.stringify(pfItems);
+  if (el) el.textContent = JSON.stringify(pfItems, null, 2);
 }
 
+// ── Download updated HTML with new data baked in ──
 function exportAndDownload() {
-  const el = document.getElementById('pf-data');
-  if (el) el.textContent = JSON.stringify(pfItems);
   const src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
   const blob = new Blob([src], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
@@ -1526,6 +1539,7 @@ function exportAndDownload() {
   document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
 }
+
 // ── DOM shortcuts ──
 const mainSite = () => document.getElementById('mainSite');
 const pfPage   = () => document.getElementById('pfPage');
@@ -1874,5 +1888,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
-</body>
-</html>
+
+</body></html>
