@@ -833,6 +833,10 @@
     background: #000; border-radius: 12px; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
   }
+  @media (max-width: 600px) {
+    #pfLbContent { border-radius: 8px; min-height: 200px; }
+    #pfLbInner { gap: 0.5rem; }
+  }
 
   /* ── Card hover hint ── */
   .pf-hover-hint {
@@ -895,12 +899,43 @@
     position: relative; width: 100%; aspect-ratio: 16/9;
     background: #000; overflow: hidden;
   }
+  /* Mobile: fallback height if aspect-ratio not supported */
+  @supports not (aspect-ratio: 16/9) {
+    #pfModalPlayer { padding-bottom: 56.25%; height: 0; }
+  }
+  @media (max-width: 600px) {
+    #pfModalPlayer {
+      aspect-ratio: 16/9;
+      width: 100%;
+      min-height: 200px;
+    }
+    #pfModalBox {
+      width: 100vw;
+      border-radius: 0;
+      margin: 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+    #pfVideoModal {
+      align-items: flex-end;
+    }
+  }
   #pfVideoContainer {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
   }
   #pfVideoContainer iframe {
     width: 100%; height: 100%; border: none; display: block;
+  }
+  /* Streamable watermark blocker — covers bottom-left logo */
+  .pf-wm-block {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 110px; height: 38px;
+    background: #000;
+    z-index: 10;
+    pointer-events: none;
   }
 
   /* Custom controls overlay — hidden, Streamable has its own player */
@@ -1021,7 +1056,7 @@
     <div>
       <div class="about-text">
         <p>I am a hard-working and friendly person from Naogaon, Bangladesh. I completed my Class 5 from Sultanpur North GOVT Primary School in 2022, and Class 8 from Par Naogaon High School in 2025.</p>
-        <p>For over 2 years, I have served as a <strong>Peer Leader</strong> under UNICEF's child protection initiatives — working directly with young people in my community to raise awareness about child marriage, cyberbullying, violence, and mental health etc</p>
+        <p>For over 2 years, I have served as a <strong>Peer Leader</strong> under UNICEF's child protection initiatives — working directly with young people in my community to raise awareness about child marriage, cyberbullying, violence, and mental health etc.</p>
         <p>Beyond community work, I have a deep passion for <strong>3D modelling using Blender</strong>. I also troubleshoot computer problems and solve technical errors, which helps me grow my skills every day.</p>
         <p>I believe in lifelong learning and giving back to the community. I am always ready to take on new challenges and do my absolute best in everything I do.</p>
       </div>
@@ -1268,22 +1303,8 @@
       <div class="pf-admin-title">⚙ Admin Panel — Add New Content</div>
 
       <div class="pf-type-tabs">
-        <button class="pf-tab" id="tabVideo">🎬 Video File</button>
-        <button class="pf-tab active" id="tabYt">▶ Streamable</button>
+        <button class="pf-tab active" id="tabYt">▶ Streamable Video</button>
         <button class="pf-tab" id="tabImg">🖼 Image URL</button>
-      </div>
-
-      <!-- Video upload -->
-      <div id="tabPanelVideo" style="display:none;">
-        <div class="pf-form-row">
-          <input class="pf-input" type="text" id="pfVidTitle" placeholder="Title (e.g. Blender Animation 1)" />
-          <input class="pf-input" type="text" id="pfVidDesc"  placeholder="Short description (optional)" />
-        </div>
-        <div class="pf-form-row">
-          <input class="pf-input" type="file" id="pfVidFile" accept="video/*" style="padding:0.45rem 0.7rem;" />
-          <button class="pf-add-btn" id="btnAddVideo">+ Add</button>
-        </div>
-        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">⚠ Video file শুধু এই device এ দেখা যাবে। সবার জন্য Streamable tab ব্যবহার করুন।</p>
       </div>
 
       <!-- Streamable -->
@@ -1353,6 +1374,8 @@
       <div id="pfModalPlayer" class="paused">
         <!-- Streamable / video iframe loads here -->
         <div id="pfVideoContainer" style="position:absolute;inset:0;width:100%;height:100%;"></div>
+        <!-- Blocks Streamable watermark (bottom-left logo) -->
+        <div class="pf-wm-block"></div>
         <!-- Custom controls overlay (visual only — Streamable has its own player) -->
         <div id="pfCustomControls">
           <div id="pfCtrlTop"></div>
@@ -1565,8 +1588,8 @@ function adminLogout() {
 // ── Tab switching ──
 function switchTab(tab) {
   pfCurrentTab = tab;
-  const tabMap   = { video: 'tabVideo', youtube: 'tabYt', image: 'tabImg' };
-  const panelMap = { video: 'tabPanelVideo', youtube: 'tabPanelYoutube', image: 'tabPanelImage' };
+  const tabMap   = { youtube: 'tabYt', image: 'tabImg' };
+  const panelMap = { youtube: 'tabPanelYoutube', image: 'tabPanelImage' };
   Object.keys(tabMap).forEach(t => {
     document.getElementById(tabMap[t]).classList.toggle('active', t === tab);
     document.getElementById(panelMap[t]).style.display = t === tab ? 'block' : 'none';
@@ -1598,26 +1621,6 @@ function addImageUrl() {
   document.getElementById('pfImgUrl').value   = '';
 }
 
-// ── Add Video File (local — only visible on this device) ──
-function addVideoFile() {
-  const title = document.getElementById('pfVidTitle').value.trim() || 'Video';
-  const desc  = document.getElementById('pfVidDesc').value.trim();
-  const file  = document.getElementById('pfVidFile').files[0];
-  if (!file) { alert('Please select a video file.'); return; }
-  const btn = document.querySelector('#tabPanelVideo .pf-add-btn');
-  btn.textContent = 'Loading…'; btn.disabled = true;
-  const reader = new FileReader();
-  reader.onload = e => {
-    pfItems.unshift({ id: Date.now(), type: 'video', title, desc, src: e.target.result });
-    pfSave(); renderGrid(); renderAdminList();
-    document.getElementById('pfVidTitle').value = '';
-    document.getElementById('pfVidDesc').value  = '';
-    document.getElementById('pfVidFile').value  = '';
-    btn.textContent = '+ Add'; btn.disabled = false;
-  };
-  reader.readAsDataURL(file);
-}
-
 // ── Delete ──
 function deleteItem(id) {
   if (!confirm('Delete this item?')) return;
@@ -1643,7 +1646,7 @@ function openLightbox(item) {
         allowfullscreen style="width:100%;height:100%;border:none;display:block;border-radius:12px;"></iframe>`;
   } else if (item.type === 'video') {
     lbContent.innerHTML = `
-      <video controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:12px;background:#000;">
+      <video controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;border-radius:12px;background:#000;">
         <source src="${item.src}" type="video/mp4">
       </video>`;
   } else {
@@ -1819,12 +1822,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnAdminLogout').addEventListener('click', adminLogout);
 
   // Tabs
-  document.getElementById('tabVideo').addEventListener('click', () => switchTab('video'));
   document.getElementById('tabYt').addEventListener('click', () => switchTab('youtube'));
   document.getElementById('tabImg').addEventListener('click', () => switchTab('image'));
 
   // Add content buttons
-  document.getElementById('btnAddVideo').addEventListener('click', addVideoFile);
   document.getElementById('btnAddYoutube').addEventListener('click', addYoutube);
   document.getElementById('btnAddImage').addEventListener('click', addImageUrl);
 
