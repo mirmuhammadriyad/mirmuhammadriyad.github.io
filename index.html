@@ -890,52 +890,23 @@
   }
   #pfModalClose:hover { background: rgba(239,68,68,0.8); border-color: transparent; }
 
-  /* Player area: YouTube iframe hidden behind custom controls */
+  /* Player area */
   #pfModalPlayer {
     position: relative; width: 100%; aspect-ratio: 16/9;
     background: #000; overflow: hidden;
   }
-  #pfYtContainer {
+  #pfVideoContainer {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
-    pointer-events: none; /* block YouTube's own UI — custom controls sit above */
   }
-  #pfYtPlayer { width: 100%; height: 100%; }
-  /* Black cover hides YouTube's splash/play button before our player takes over */
-  #pfYtCover {
-    position: absolute; inset: 0; z-index: 4;
-    background: #000;
-    transition: opacity 0.4s ease;
+  #pfVideoContainer iframe {
+    width: 100%; height: 100%; border: none; display: block;
   }
-  #pfYtCover.hidden { opacity: 0; pointer-events: none; }
 
-  /* Custom controls overlay */
+  /* Custom controls overlay — hidden, Streamable has its own player */
   #pfCustomControls {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    justify-content: space-between;
-    z-index: 5;
-    opacity: 0; transition: opacity 0.3s;
-    /* Transparent so video shows through */
-    background: transparent;
+    display: none; /* Streamable এর নিজের controls আছে, overlap করব না */
   }
-  /* Show bottom bar + center btn on hover */
-  #pfModalPlayer:hover #pfCustomControls { opacity: 1; }
-  /* When paused: always show */
-  #pfModalPlayer.paused #pfCustomControls { opacity: 1; }
-  /* When playing and not hovering: hide center btn, keep bottom on hover only */
-  #pfModalPlayer:not(.paused):not(:hover) #pfCtrlMiddle { opacity: 0; }
-
-  #pfCtrlTop { height: 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.45), transparent); }
-
-  #pfCtrlMiddle {
-    display: flex; align-items: center; justify-content: center;
-    flex: 1; transition: opacity 0.25s;
-  }
-  /* Hide center big button while playing — only show on pause/hover */
-  #pfModalPlayer:not(.paused) #pfCtrlMiddle { opacity: 0; pointer-events: none; }
-  #pfModalPlayer:not(.paused):hover #pfCtrlMiddle { opacity: 1; pointer-events: auto; }
-  #pfModalPlayer.paused #pfCtrlMiddle { opacity: 1; pointer-events: auto; }
 
   .pf-ctrl-btn {
     background: none; border: none; cursor: pointer;
@@ -1298,7 +1269,7 @@
 
       <div class="pf-type-tabs">
         <button class="pf-tab" id="tabVideo">🎬 Video File</button>
-        <button class="pf-tab active" id="tabYt">▶ YouTube</button>
+        <button class="pf-tab active" id="tabYt">▶ Streamable</button>
         <button class="pf-tab" id="tabImg">🖼 Image URL</button>
       </div>
 
@@ -1312,20 +1283,20 @@
           <input class="pf-input" type="file" id="pfVidFile" accept="video/*" style="padding:0.45rem 0.7rem;" />
           <button class="pf-add-btn" id="btnAddVideo">+ Add</button>
         </div>
-        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">⚠ Video file শুধু এই device এ দেখা যাবে। সবার জন্য YouTube tab ব্যবহার করুন।</p>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">⚠ Video file শুধু এই device এ দেখা যাবে। সবার জন্য Streamable tab ব্যবহার করুন।</p>
       </div>
 
-      <!-- YouTube -->
+      <!-- Streamable -->
       <div id="tabPanelYoutube">
         <div class="pf-form-row">
           <input class="pf-input" type="text" id="pfYtTitle" placeholder="Title" />
           <input class="pf-input" type="text" id="pfYtDesc"  placeholder="Description (optional)" />
         </div>
         <div class="pf-form-row">
-          <input class="pf-input" type="text" id="pfYtUrl" placeholder="YouTube URL or Video ID" />
+          <input class="pf-input" type="text" id="pfYtUrl" placeholder="Streamable URL (e.g. https://streamable.com/abc123)" />
           <button class="pf-add-btn" id="btnAddYoutube">+ Add</button>
         </div>
-        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ YouTube Unlisted video সবাই দেখতে পাবে। সবচেয়ে ভালো option।</p>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Streamable এ upload করে link দাও — clean player, সবাই দেখতে পাবে।</p>
       </div>
 
       <!-- Image URL -->
@@ -1371,7 +1342,7 @@
   </div>
 
 
-  <!-- VIDEO MODAL — custom controls, YouTube hidden underneath -->
+  <!-- VIDEO MODAL — Streamable clean player -->
   <div id="pfVideoModal">
     <div id="pfModalOverlay"></div>
     <div id="pfModalBox">
@@ -1379,14 +1350,10 @@
         <span id="pfModalTitle"></span>
         <button id="pfModalClose">&#x2715;</button>
       </div>
-      <div id="pfModalPlayer">
-        <!-- YouTube iframe sits behind, controlled via JS API -->
-        <div id="pfYtContainer">
-          <div id="pfYtPlayer"></div>
-        </div>
-        <!-- Black cover: hides YouTube's own play btn until video starts -->
-        <div id="pfYtCover"></div>
-        <!-- Custom controls overlay -->
+      <div id="pfModalPlayer" class="paused">
+        <!-- Streamable / video iframe loads here -->
+        <div id="pfVideoContainer" style="position:absolute;inset:0;width:100%;height:100%;"></div>
+        <!-- Custom controls overlay (visual only — Streamable has its own player) -->
         <div id="pfCustomControls">
           <div id="pfCtrlTop"></div>
           <div id="pfCtrlMiddle">
@@ -1606,15 +1573,14 @@ function switchTab(tab) {
   });
 }
 
-// ── Add YouTube (recommended — works for everyone) ──
+// ── Add Streamable ──
 function addYoutube() {
-  const title = document.getElementById('pfYtTitle').value.trim() || 'YouTube Video';
+  const title = document.getElementById('pfYtTitle').value.trim() || 'Video';
   const desc  = document.getElementById('pfYtDesc').value.trim();
   let   url   = document.getElementById('pfYtUrl').value.trim();
-  if (!url) { alert('Please enter a YouTube URL or Video ID.'); return; }
-  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
-  const vid = m ? m[1] : url;
-  pfItems.unshift({ id: Date.now(), type: 'youtube', title, desc, src: vid });
+  if (!url) { alert('Please enter a Streamable URL.'); return; }
+  // Store full URL or just the ID — openVideoModal will handle both
+  pfItems.unshift({ id: Date.now(), type: 'youtube', title, desc, src: url });
   pfSave(); renderGrid(); renderAdminList();
   ['pfYtTitle','pfYtDesc','pfYtUrl'].forEach(id => document.getElementById(id).value = '');
 }
@@ -1670,9 +1636,10 @@ function openLightbox(item) {
   lbContent.innerHTML = '';
 
   if (item.type === 'youtube') {
+    const sid = (item.src.match(/streamable\.com\/([a-zA-Z0-9]+)/) || ['', item.src])[1];
     lbContent.innerHTML = `
-      <iframe src="https://www.youtube.com/embed/${item.src}?autoplay=1&rel=0"
-        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+      <iframe src="https://streamable.com/e/${sid}?autoplay=1"
+        allow="autoplay; fullscreen"
         allowfullscreen style="width:100%;height:100%;border:none;display:block;border-radius:12px;"></iframe>`;
   } else if (item.type === 'video') {
     lbContent.innerHTML = `
@@ -1700,25 +1667,15 @@ function closeLightbox() {
   lbOpen = false;
 }
 
-// ── Video Modal — YouTube IFrame API with custom controls ──
-let modalOpen  = false;
-let ytPlayer   = null;
-let ytReady    = false;
-let progressTimer = null;
-let isMuted    = false;
-let isPaused   = true;
 
-// Load YouTube IFrame API once
-(function loadYTApi() {
-  if (window.YT || document.getElementById('yt-api-script')) return;
-  const s = document.createElement('script');
-  s.id  = 'yt-api-script';
-  s.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(s);
-})();
+let modalOpen = false;
 
-// Called by YouTube API when ready
-window.onYouTubeIframeAPIReady = function() { ytReady = true; };
+// ── Streamable Video Modal ──
+function getStreamableId(url) {
+  // Accepts: https://streamable.com/abc123  or  abc123
+  const m = url.match(/streamable\.com\/([a-zA-Z0-9]+)/);
+  return m ? m[1] : url.trim();
+}
 
 function openVideoModal(item) {
   const modal = document.getElementById('pfVideoModal');
@@ -1726,137 +1683,28 @@ function openVideoModal(item) {
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
   modalOpen = true;
-  setPaused(true);
 
-  const makePlayer = () => {
-    if (ytPlayer) {
-      ytPlayer.destroy();
-      ytPlayer = null;
-    }
-    document.getElementById('pfYtPlayer').innerHTML = '';
-    ytPlayer = new YT.Player('pfYtPlayer', {
-      videoId: item.src,
-      playerVars: {
-        autoplay: 1,
-        controls: 0,        // hide YouTube controls
-        rel: 0,
-        modestbranding: 1,
-        showinfo: 0,
-        iv_load_policy: 3,  // hide annotations
-        disablekb: 1,       // disable keyboard (we handle it)
-        playsinline: 1,
-        cc_load_policy: 0,
-        fs: 0,              // hide fullscreen btn (we have our own)
-        origin: location.origin,
-      },
-      events: {
-        onReady: e => { e.target.playVideo(); startProgress(); },
-        onStateChange: e => {
-          const s = e.data;
-          if (s === YT.PlayerState.PLAYING) {
-            setPaused(false); startProgress();
-            // Remove black cover once video is actually playing
-            const cover = document.getElementById('pfYtCover');
-            if (cover) cover.classList.add('hidden');
-          }
-          if (s === YT.PlayerState.PAUSED)  { setPaused(true);  stopProgress(); }
-          if (s === YT.PlayerState.ENDED)   { setPaused(true);  stopProgress(); setProgress(0); }
-        }
-      }
-    });
-  };
-
-  if (window.YT && YT.Player) { makePlayer(); }
-  else {
-    // API not yet loaded — wait
-    const wait = setInterval(() => {
-      if (window.YT && YT.Player) { clearInterval(wait); makePlayer(); }
-    }, 100);
-  }
+  const container = document.getElementById('pfVideoContainer');
+  const sid = getStreamableId(item.src);
+  // autoplay=1 — plays immediately on click, no extra steps
+  container.innerHTML = `<iframe
+    src="https://streamable.com/e/${sid}?autoplay=1&muted=0"
+    frameborder="0"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+    style="position:absolute;inset:0;width:100%;height:100%;border:none;"
+  ></iframe>`;
 }
 
 function closeVideoModal() {
   if (!modalOpen) return;
-  stopProgress();
-  if (ytPlayer) { try { ytPlayer.stopVideo(); ytPlayer.destroy(); } catch(e){} ytPlayer = null; }
-  document.getElementById('pfYtPlayer').innerHTML = '';
-  // Reset cover for next open
-  const cover = document.getElementById('pfYtCover');
-  if (cover) cover.classList.remove('hidden');
+  document.getElementById('pfVideoContainer').innerHTML = '';
   document.getElementById('pfVideoModal').classList.remove('active');
   document.body.style.overflow = '';
   modalOpen = false;
-  setPaused(true);
 }
 
-function setPaused(p) {
-  isPaused = p;
-  const player = document.getElementById('pfModalPlayer');
-  if (p) player.classList.add('paused'); else player.classList.remove('paused');
-  // big play/pause
-  document.getElementById('pfPlayIcon').style.display  = p ? '' : 'none';
-  document.getElementById('pfPauseIcon').style.display = p ? 'none' : '';
-  // bottom play/pause
-  document.getElementById('pfPlayIcon2').style.display  = p ? '' : 'none';
-  document.getElementById('pfPauseIcon2').style.display = p ? 'none' : '';
-}
-
-function togglePlayPause() {
-  if (!ytPlayer) return;
-  try {
-    if (isPaused) ytPlayer.playVideo(); else ytPlayer.pauseVideo();
-  } catch(e) {}
-}
-
-function toggleMute() {
-  if (!ytPlayer) return;
-  isMuted = !isMuted;
-  try {
-    isMuted ? ytPlayer.mute() : ytPlayer.unMute();
-  } catch(e) {}
-  document.getElementById('pfVolIcon').style.display  = isMuted ? 'none' : '';
-  document.getElementById('pfMuteIcon').style.display = isMuted ? '' : 'none';
-}
-
-function startProgress() {
-  stopProgress();
-  progressTimer = setInterval(() => {
-    if (!ytPlayer) return;
-    try {
-      const cur  = ytPlayer.getCurrentTime() || 0;
-      const dur  = ytPlayer.getDuration()    || 0;
-      const pct  = dur ? (cur / dur) * 100 : 0;
-      setProgress(pct);
-      document.getElementById('pfCtrlTime').textContent =
-        fmtTime(cur) + ' / ' + fmtTime(dur);
-      // Update dot position
-      document.getElementById('pfProgressDot').style.right = `calc(${100 - pct}% - 0px)`;
-    } catch(e) {}
-  }, 500);
-}
-function stopProgress() { clearInterval(progressTimer); }
-function setProgress(pct) {
-  document.getElementById('pfProgressFill').style.width = pct + '%';
-}
-function fmtTime(s) {
-  s = Math.floor(s || 0);
-  const m = Math.floor(s / 60); s = s % 60;
-  return m + ':' + String(s).padStart(2, '0');
-}
-
-// Click on progress bar to seek
-function setupProgressClick() {
-  const wrap = document.getElementById('pfProgressWrap');
-  wrap.addEventListener('click', e => {
-    if (!ytPlayer) return;
-    const rect = wrap.getBoundingClientRect();
-    const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    try {
-      const dur = ytPlayer.getDuration() || 0;
-      ytPlayer.seekTo(pct * dur, true);
-    } catch(e2) {}
-  });
-}
+function setupProgressClick() {} // no-op for Streamable
 
 // ── Render grid ──
 function renderGrid() {
@@ -1874,10 +1722,12 @@ function renderGrid() {
     mediaDiv.className = 'pf-card-media';
 
     if (item.type === 'youtube') {
-      const hq = `https://img.youtube.com/vi/${item.src}/maxresdefault.jpg`;
-      const mq = `https://img.youtube.com/vi/${item.src}/hqdefault.jpg`;
+      // Streamable thumbnail — use Streamable's thumbnail API
+      const sid = (item.src.match(/streamable\.com\/([a-zA-Z0-9]+)/) || ['', item.src])[1];
+      const thumbUrl = `https://cdn-cf-east.streamable.com/image/${sid}.jpg`;
+      const fallback = `https://cdn-cf-east.streamable.com/image/${sid}.png`;
       mediaDiv.innerHTML = `
-        <img src="${hq}" onerror="this.src='${mq}'" alt="${item.title}"
+        <img src="${thumbUrl}" onerror="this.src='${fallback}';this.onerror=null;" alt="${item.title}"
           style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
         <div class="pf-hover-hint">&#9654; Play</div>`;
       mediaDiv.style.cursor = 'pointer';
@@ -1984,15 +1834,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Video modal
   document.getElementById('pfModalClose').addEventListener('click', closeVideoModal);
   document.getElementById('pfModalOverlay').addEventListener('click', closeVideoModal);
-  document.getElementById('pfCtrlPlay').addEventListener('click', togglePlayPause);
-  document.getElementById('pfCtrlPlay2').addEventListener('click', togglePlayPause);
-  document.getElementById('pfCtrlMute').addEventListener('click', toggleMute);
-  document.getElementById('pfCtrlFull').addEventListener('click', () => {
-    const box = document.getElementById('pfModalPlayer');
-    if (box.requestFullscreen) box.requestFullscreen();
-    else if (box.webkitRequestFullscreen) box.webkitRequestFullscreen();
-  });
-  setupProgressClick();
   document.getElementById('pfLightbox').addEventListener('click', e => {
     if (e.target === document.getElementById('pfLightbox')) closeLightbox();
   });
