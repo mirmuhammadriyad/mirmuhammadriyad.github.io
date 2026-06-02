@@ -928,15 +928,7 @@
   #pfVideoContainer iframe {
     width: 100%; height: 100%; border: none; display: block;
   }
-  /* Streamable watermark blocker — covers bottom-left logo */
-  .pf-wm-block {
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 110px; height: 38px;
-    background: #000;
-    z-index: 10;
-    pointer-events: none;
-  }
+
 
   /* Custom controls overlay — hidden, Streamable has its own player */
   #pfCustomControls {
@@ -1334,8 +1326,12 @@
       </div>
 
       <div class="pf-item-list" id="pfItemList"></div>
-      <div style="margin-top:0.8rem;">
-        <button id="btnAdminLogout" style="background:none;border:none;color:rgba(255,100,100,0.6);font-size:0.8rem;cursor:pointer;">Logout</button>
+      <div style="margin-top:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <button id="btnSaveDownload" style="background:var(--teal);border:none;color:#fff;font-size:0.85rem;font-weight:700;padding:0.6rem 1.2rem;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:0.5rem;">
+          ⬇ Save &amp; Download File
+        </button>
+        <div id="pfSaveHint" style="color:rgba(255,255,255,0.35);font-size:0.76rem;line-height:1.4;">Item add/delete করার পর এই button চাপো।<br>Download হওয়া file টা দিয়ে পুরনো index.html replace করো।</div>
+        <button id="btnAdminLogout" style="background:none;border:none;color:rgba(255,100,100,0.5);font-size:0.8rem;cursor:pointer;margin-left:auto;">Logout</button>
       </div>
     </div>
 
@@ -1374,8 +1370,6 @@
       <div id="pfModalPlayer" class="paused">
         <!-- Streamable / video iframe loads here -->
         <div id="pfVideoContainer" style="position:absolute;inset:0;width:100%;height:100%;"></div>
-        <!-- Blocks Streamable watermark (bottom-left logo) -->
-        <div class="pf-wm-block"></div>
         <!-- Custom controls overlay (visual only — Streamable has its own player) -->
         <div id="pfCustomControls">
           <div id="pfCtrlTop"></div>
@@ -1417,6 +1411,11 @@
   </div>
 
 </div><!-- /pfPage -->
+
+<!-- ═══ PORTFOLIO DATA — baked into file, visible on ALL devices ═══ -->
+<script id="pf-data" type="application/json">
+[]
+</script>
 
 <script>
 // Scroll animation
@@ -1490,20 +1489,37 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 // ══════════════════════════════════════════
 // PORTFOLIO FULL-PAGE SYSTEM
 // ══════════════════════════════════════════
-const PF_KEY     = 'pf_items_v2';
 const ADMIN_PASS = atob('TWlyIE11aGFtbWFkIFJpeWFkMTEhIXdlYg==');
 
 let pfItems      = [];
 let pfIsAdmin    = false;
 let pfCurrentTab = 'youtube';
 
-// ── Persist (localStorage — data stays in your browser) ──
+// ── Data lives inside the HTML file itself — works on ALL devices ──
 function pfLoad() {
-  try { pfItems = JSON.parse(localStorage.getItem(PF_KEY) || '[]'); }
-  catch(e) { pfItems = []; }
+  try {
+    const el = document.getElementById('pf-data');
+    pfItems = el ? JSON.parse(el.textContent.trim() || '[]') : [];
+  } catch(e) { pfItems = []; }
 }
+
 function pfSave() {
-  try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
+  // Update the embedded data block so exportAndDownload() picks it up
+  const el = document.getElementById('pf-data');
+  if (el) el.textContent = JSON.stringify(pfItems, null, 2);
+}
+
+// ── Download updated HTML with new data baked in ──
+function exportAndDownload() {
+  const src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([src], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 }
 
 // ── DOM shortcuts ──
@@ -1828,6 +1844,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add content buttons
   document.getElementById('btnAddYoutube').addEventListener('click', addYoutube);
   document.getElementById('btnAddImage').addEventListener('click', addImageUrl);
+
+  // Save & Download
+  document.getElementById('btnSaveDownload').addEventListener('click', () => {
+    exportAndDownload();
+    const hint = document.getElementById('pfSaveHint');
+    hint.style.color = 'var(--teal-light)';
+    hint.textContent = '✓ File download হচ্ছে! পুরনো index.html replace করো।';
+    setTimeout(() => {
+      hint.style.color = 'rgba(255,255,255,0.35)';
+      hint.innerHTML = 'Item add/delete করার পর এই button চাপো।<br>Download হওয়া file টা দিয়ে পুরনো index.html replace করো।';
+    }, 4000);
+  });
 
   // Lightbox close
   document.getElementById('pfLbClose').addEventListener('click', closeLightbox);
