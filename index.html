@@ -1495,22 +1495,27 @@ let pfItems      = [];
 let pfIsAdmin    = false;
 let pfCurrentTab = 'youtube';
 
-// ── Data lives inside the HTML file itself — works on ALL devices ──
+// ── Storage: localStorage (instant) + pf-data block (for download) ──
+const PF_KEY = 'pf_items_v2';
+
 function pfLoad() {
   try {
+    const ls = localStorage.getItem(PF_KEY);
+    if (ls) { pfItems = JSON.parse(ls); return; }
     const el = document.getElementById('pf-data');
     pfItems = el ? JSON.parse(el.textContent.trim() || '[]') : [];
   } catch(e) { pfItems = []; }
 }
 
 function pfSave() {
-  // Update the embedded data block so exportAndDownload() picks it up
+  try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
   const el = document.getElementById('pf-data');
-  if (el) el.textContent = JSON.stringify(pfItems, null, 2);
+  if (el) el.textContent = JSON.stringify(pfItems);
 }
 
-// ── Download updated HTML with new data baked in ──
 function exportAndDownload() {
+  const el = document.getElementById('pf-data');
+  if (el) el.textContent = JSON.stringify(pfItems);
   const src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
   const blob = new Blob([src], { type: 'text/html;charset=utf-8' });
   const a = document.createElement('a');
@@ -1521,7 +1526,6 @@ function exportAndDownload() {
   document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
 }
-
 // ── DOM shortcuts ──
 const mainSite = () => document.getElementById('mainSite');
 const pfPage   = () => document.getElementById('pfPage');
