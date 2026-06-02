@@ -22,10 +22,19 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100%;
   }
+
+  /* Custom smooth scrollbar (desktop) */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--teal);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--teal-light); }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -1421,6 +1430,56 @@
 </script>
 
 <script>
+
+// ══════════════════════════════════════════
+// SMOOTH SCROLL — vanilla, no library needed
+// ══════════════════════════════════════════
+(function() {
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+  let currentY  = window.scrollY;
+  let targetY   = window.scrollY;
+  let rafId     = null;
+  let paused    = false;
+
+  const ease = 0.10; // lower = smoother/slower, higher = snappier
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function tick() {
+    if (paused) { rafId = requestAnimationFrame(tick); return; }
+    currentY = lerp(currentY, targetY, ease);
+    const diff = Math.abs(targetY - currentY);
+    if (diff < 0.5) {
+      currentY = targetY;
+    }
+    window.scrollTo(0, currentY);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('wheel', e => {
+    if (paused) return;
+    e.preventDefault();
+    targetY = Math.max(0, Math.min(
+      document.body.scrollHeight - window.innerHeight,
+      targetY + e.deltaY * 1.2
+    ));
+  }, { passive: false });
+
+  // Touch: native scroll on mobile is already smooth, skip override
+  if (!isMobile) {
+    rafId = requestAnimationFrame(tick);
+  }
+
+  // Pause when portfolio or modal is open (they have their own scroll)
+  window.smoothScrollPause  = () => { paused = true; };
+  window.smoothScrollResume = () => {
+    paused = false;
+    currentY = window.scrollY;
+    targetY  = window.scrollY;
+  };
+})();
+
 // Scroll animation
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
@@ -1539,6 +1598,7 @@ const pfPage   = () => document.getElementById('pfPage');
 
 // ── History API: browser back button support ──
 function openPortfolio() {
+  if (window.smoothScrollPause) window.smoothScrollPause();
   pfLoad();
   mainSite().style.display = 'none';
   pfPage().classList.add('active');
@@ -1553,6 +1613,7 @@ function openPortfolio() {
 }
 
 function closePortfolio() {
+  if (window.smoothScrollResume) window.smoothScrollResume();
   document.querySelectorAll('#pfGrid video').forEach(v => v.pause());
   closeLightbox();
   pfPage().classList.remove('active');
