@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mir Muhammad Riyad — Portfolio</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,4 93,27 93,73 50,96 7,73 7,27' fill='%230c1f3f' stroke='%233b82f6' stroke-width='3'/%3E%3Cline x1='28' y1='2' x2='72' y2='2' stroke='%233b82f6' stroke-width='4' stroke-linecap='round'/%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%23ffffff' stroke-width='7'%3E%3Cline x1='14' y1='64' x2='14' y2='36'/%3E%3Cline x1='14' y1='36' x2='26' y2='56'/%3E%3Cline x1='26' y1='56' x2='38' y2='36'/%3E%3Cline x1='38' y1='36' x2='38' y2='64'/%3E%3C/g%3E%3Cg stroke='%233b82f6' stroke-width='7'%3E%3Cline x1='44' y1='64' x2='44' y2='36'/%3E%3Cline x1='44' y1='36' x2='56' y2='56'/%3E%3Cline x1='56' y1='56' x2='68' y2='36'/%3E%3Cline x1='68' y1='36' x2='68' y2='64'/%3E%3C/g%3E%3Cg stroke='%2360a5fa' stroke-width='7'%3E%3Cline x1='68' y1='36' x2='84' y2='36'/%3E%3Cpath d='M84,36 C96,36 96,56 84,56'/%3E%3Cline x1='68' y1='56' x2='84' y2='56'/%3E%3Cline x1='84' y1='56' x2='92' y2='70'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0a1628;
-    --teal: #0d9488;
-    --teal-light: #2dd4bf;
-    --gold: #f59e0b;
-    --cream: #fafaf7;
-    --text: #1e293b;
-    --muted: #64748b;
-    --card-bg: #ffffff;
-    --border: #e2e8f0;
+    --navy:       #0c1f3f;
+    --teal:       #3b82f6;
+    --teal-light: #60a5fa;
+    --gold:       #93c5fd;
+    --cream:      #f0f4ff;
+    --text:       #0f172a;
+    --muted:      #475569;
+    --card-bg:    #ffffff;
+    --border:     #dbeafe;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -53,7 +54,7 @@
     backdrop-filter: blur(12px);
     display: flex; justify-content: space-between; align-items: center;
     padding: 1rem 2.5rem;
-    border-bottom: 1px solid rgba(13,148,136,0.3);
+    border-bottom: 1px solid rgba(59,130,246,0.3);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -125,7 +126,7 @@
       box-sizing: border-box;
       background: rgba(8,18,34,0.98);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(13,148,136,0.25);
+      border-bottom: 1px solid rgba(59,130,246,0.25);
       flex-direction: column;
       gap: 0;
       list-style: none;
@@ -185,7 +186,7 @@
       flex-shrink: 0;
     }
     .nav-links li a:hover {
-      background: rgba(13,148,136,0.1);
+      background: rgba(59,130,246,0.1);
       color: var(--teal-light);
       padding-left: 1.8rem;
     }
@@ -195,7 +196,7 @@
   /* ─── HERO ─── */
   .hero {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--navy) 0%, #0f2044 60%, #0d2b3e 100%);
+    background: linear-gradient(135deg, var(--navy) 0%, #0f2a5c 60%, #0c2347 100%);
     display: grid; grid-template-columns: 1fr 1fr;
     align-items: center; gap: 0;
     position: relative; overflow: hidden;
@@ -205,7 +206,7 @@
     content: '';
     position: absolute; top: -100px; right: -100px;
     width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(13,148,136,0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none; z-index: 0;
   }
@@ -213,7 +214,7 @@
     content: '';
     position: absolute; bottom: -50px; left: -50px;
     width: 250px; height: 250px;
-    background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none; z-index: 0;
   }
@@ -275,15 +276,15 @@
   }
   .btn-primary:hover {
     background: var(--teal-light); transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(13,148,136,0.4);
+    box-shadow: 0 8px 25px rgba(59,130,246,0.4);
   }
   .btn-portfolio {
-    background: linear-gradient(135deg, var(--gold), #f59e0b);
-    color: #0a1628; border: none;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff; border: none;
   }
   .btn-portfolio:hover {
     filter: brightness(1.1); transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(245,158,11,0.4);
+    box-shadow: 0 8px 25px rgba(59,130,246,0.5);
   }
   .btn-secondary {
     background: transparent; color: rgba(255,255,255,0.85);
@@ -400,7 +401,7 @@
   .exp-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--text); }
   .exp-org { font-size: 0.9rem; color: var(--teal); font-weight: 600; margin-bottom: 0.3rem; }
   .exp-period {
-    background: rgba(13,148,136,0.1); color: var(--teal);
+    background: rgba(59,130,246,0.1); color: var(--teal);
     padding: 0.3rem 0.8rem; border-radius: 50px;
     font-size: 0.78rem; font-weight: 600; white-space: nowrap;
   }
@@ -415,7 +416,7 @@
   }
   .project-tag {
     display: inline-block; margin-right: 0.5rem; margin-bottom: 0.5rem;
-    background: rgba(13,148,136,0.08); border: 1px solid rgba(13,148,136,0.2);
+    background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);
     color: var(--teal); padding: 0.2rem 0.6rem;
     border-radius: 4px; font-size: 0.75rem; font-weight: 600;
   }
@@ -432,8 +433,8 @@
     transition: all 0.3s;
   }
   .skill-category:hover {
-    background: rgba(13,148,136,0.1);
-    border-color: rgba(13,148,136,0.3);
+    background: rgba(59,130,246,0.1);
+    border-color: rgba(59,130,246,0.3);
     transform: translateY(-3px);
   }
   .skill-cat-icon {
@@ -460,7 +461,7 @@
   .edu-timeline::before {
     content: ''; position: absolute;
     left: 24px; top: 0; bottom: 0; width: 2px;
-    background: linear-gradient(to bottom, var(--teal), rgba(13,148,136,0.1));
+    background: linear-gradient(to bottom, var(--teal), rgba(59,130,246,0.1));
   }
   .edu-item {
     display: flex; gap: 2rem; margin-bottom: 2.5rem;
@@ -472,7 +473,7 @@
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 1.2rem; flex-shrink: 0;
     position: relative; z-index: 1;
-    box-shadow: 0 4px 12px rgba(13,148,136,0.4);
+    box-shadow: 0 4px 12px rgba(59,130,246,0.4);
   }
   .edu-content {
     background: var(--cream); border-radius: 12px;
@@ -491,7 +492,7 @@
 
   /* ─── CONTACT ─── */
   #contact {
-    background: linear-gradient(135deg, var(--navy) 0%, #0f2044 100%);
+    background: linear-gradient(135deg, var(--navy) 0%, #0f2a5c 100%);
     text-align: center;
   }
   #contact .section-label { color: var(--teal-light); }
@@ -512,8 +513,8 @@
     min-width: 200px;
   }
   .contact-card:hover {
-    background: rgba(13,148,136,0.15);
-    border-color: rgba(13,148,136,0.4);
+    background: rgba(59,130,246,0.15);
+    border-color: rgba(59,130,246,0.4);
     transform: translateY(-4px);
   }
   .contact-card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; display: block; }
@@ -552,7 +553,7 @@
   #pfPage {
     display: none;
     position: fixed; inset: 0; z-index: 500;
-    background: #050e1c;
+    background: #060e1c;
     overflow-y: auto;
     animation: pfSlideIn 0.35s cubic-bezier(0.4,0,0.2,1);
   }
@@ -568,7 +569,7 @@
     position: sticky; top: 0; z-index: 100;
     background: rgba(5,14,28,0.97);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(13,148,136,0.25);
+    border-bottom: 1px solid rgba(59,130,246,0.25);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.9rem 2rem; gap: 1rem;
   }
@@ -582,7 +583,7 @@
     white-space: nowrap;
   }
   .pf-back-btn:hover {
-    background: rgba(13,148,136,0.15);
+    background: rgba(59,130,246,0.15);
     border-color: var(--teal-light); color: var(--teal-light);
     transform: translateX(-3px);
   }
@@ -999,7 +1000,18 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Mir Muhammad Riyad</div>
+  <div class="nav-logo" style="display:flex;align-items:center;gap:0.6rem;">
+    <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;">
+      <polygon points="50,4 93,27 93,73 50,96 7,73 7,27" fill="#0c1f3f" stroke="#3b82f6" stroke-width="3"/>
+      <line x1="28" y1="2" x2="72" y2="2" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke="#ffffff" stroke-width="7"><line x1="14" y1="64" x2="14" y2="36"/><line x1="14" y1="36" x2="26" y2="56"/><line x1="26" y1="56" x2="38" y2="36"/><line x1="38" y1="36" x2="38" y2="64"/></g>
+        <g stroke="#3b82f6" stroke-width="7"><line x1="44" y1="64" x2="44" y2="36"/><line x1="44" y1="36" x2="56" y2="56"/><line x1="56" y1="56" x2="68" y2="36"/><line x1="68" y1="36" x2="68" y2="64"/></g>
+        <g stroke="#60a5fa" stroke-width="7"><line x1="68" y1="36" x2="84" y2="36"/><path d="M84,36 C96,36 96,56 84,56" fill="none"/><line x1="68" y1="56" x2="84" y2="56"/><line x1="84" y1="56" x2="92" y2="70"/></g>
+      </g>
+    </svg>
+    <span style="font-family:'Playfair Display',serif;color:#60a5fa;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;white-space:nowrap;">Mir Muhammad Riyad</span>
+  </div>
   <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
     <span class="bar"></span>
     <span class="bar"></span>
