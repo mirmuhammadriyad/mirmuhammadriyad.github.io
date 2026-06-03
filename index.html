@@ -388,15 +388,21 @@
     opacity: 0; transform: translateY(20px);
     transition: opacity 0.35s, transform 0.35s, background 0.2s;
     pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   #backToTop.visible {
     opacity: 1; transform: translateY(0);
-    pointer-events: auto;
+    pointer-events: auto !important;
   }
   #backToTop:hover {
     background: var(--teal-light);
     box-shadow: 0 6px 24px rgba(59,130,246,0.7);
     transform: translateY(-4px);
+  }
+  #backToTop:active {
+    transform: scale(0.92);
+    background: var(--teal-light);
   }
 
   .hero-image-wrap {
@@ -1810,13 +1816,14 @@
   update();
 
   if (btn) {
-    btn.addEventListener('click', function() {
-      if (typeof window.smoothScrollToTop === 'function') {
-        window.smoothScrollToTop();
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    btn.addEventListener('click', scrollToTop);
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      scrollToTop();
+    }, { passive: false });
   }
 })();
 
