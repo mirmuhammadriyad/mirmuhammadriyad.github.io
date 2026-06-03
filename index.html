@@ -311,6 +311,52 @@
     transform: translateY(-2px);
   }
 
+  /* ─── TYPING CURSOR ─── */
+  .typing-cursor {
+    display: inline-block;
+    color: var(--teal-light);
+    font-weight: 300;
+    animation: cursorBlink 0.75s step-end infinite;
+    margin-left: 1px;
+  }
+  @keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ─── SCROLL PROGRESS BAR ─── */
+  #scrollProgressBar {
+    position: fixed; top: 0; left: 0; z-index: 9999;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--teal), var(--teal-light), #93c5fd);
+    transition: width 0.1s linear;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(59,130,246,0.6);
+  }
+
+  /* ─── BACK TO TOP BUTTON ─── */
+  #backToTop {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 99999;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--teal);
+    border: none; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.2rem; font-weight: bold;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.55);
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.35s, transform 0.35s, background 0.2s;
+    pointer-events: none;
+  }
+  #backToTop.visible {
+    opacity: 1; transform: translateY(0);
+    pointer-events: auto;
+  }
+  #backToTop:hover {
+    background: var(--teal-light);
+    box-shadow: 0 6px 24px rgba(59,130,246,0.7);
+    transform: translateY(-4px);
+  }
+
   .hero-image-wrap {
     display: flex; justify-content: flex-end; align-items: center;
     padding: 4rem 4rem 4rem 1rem;
@@ -319,26 +365,38 @@
   }
   .hero-photo-frame {
     position: relative; width: 340px; height: 400px;
+    animation: heroFloat 4s ease-in-out infinite;
+  }
+  @keyframes heroFloat {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-12px); }
   }
   .hero-photo-frame::before {
     content: '';
-    position: absolute; top: -16px; right: -16px;
-    width: 100%; height: 100%;
-    border: 2px solid var(--teal);
-    border-radius: 20px; z-index: 0;
+    position: absolute; inset: -3px;
+    border-radius: 22px; z-index: 0;
+    background: linear-gradient(135deg, var(--teal) 0%, #818cf8 50%, var(--teal-light) 100%);
+    opacity: 0.85;
+    animation: frameGlow 4s ease-in-out infinite alternate;
+  }
+  @keyframes frameGlow {
+    from { opacity: 0.6; filter: blur(0px); }
+    to   { opacity: 1;   filter: blur(1px); }
   }
   .hero-photo-frame::after {
     content: '';
-    position: absolute; bottom: -16px; left: -16px;
-    width: 80px; height: 80px;
-    background: var(--gold); opacity: 0.6;
-    border-radius: 8px; z-index: 0;
+    position: absolute; inset: -28px;
+    border-radius: 36px; z-index: -1;
+    background: radial-gradient(ellipse at center, rgba(59,130,246,0.3) 0%, transparent 65%);
+    filter: blur(18px);
+    animation: frameGlow 4s ease-in-out infinite alternate-reverse;
   }
   .hero-photo {
     width: 100%; height: 100%;
     object-fit: cover; object-position: center top;
-    border-radius: 16px; position: relative; z-index: 1;
-    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 18px; position: relative; z-index: 1;
+    border: 2px solid rgba(255,255,255,0.08);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
   }
   .hero-stats {
     position: absolute; bottom: -1rem; left: -1rem;
@@ -571,13 +629,21 @@
     position: fixed; inset: 0; z-index: 500;
     background: #060e1c;
     overflow-y: auto;
-    animation: pfSlideIn 0.35s cubic-bezier(0.4,0,0.2,1);
   }
-  #pfPage.active { display: block; }
-
+  #pfPage.active {
+    display: block;
+    animation: pfSlideIn 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  #pfPage.closing {
+    animation: pfSlideOut 0.35s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
   @keyframes pfSlideIn {
-    from { opacity: 0; transform: translateX(40px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pfSlideOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(20px); }
   }
 
   /* Navbar */
@@ -628,13 +694,55 @@
   }
 
   /* Hero heading */
-  .pf-page-hero { text-align: center; margin-bottom: 3rem; }
+  .pf-page-hero {
+    text-align: center; margin-bottom: 2.5rem;
+    animation: pfHeroIn 0.6s ease 0.1s both;
+  }
+  @keyframes pfHeroIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .pf-hero-badge {
+    display: inline-block;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--teal-light); border-radius: 50px;
+    padding: 0.3rem 1rem; font-size: 0.78rem;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 1rem;
+  }
   .pf-page-hero h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 2.8rem; color: #fff; margin-bottom: 0.6rem;
+    font-size: 3rem; color: #fff; margin-bottom: 0.6rem;
+    line-height: 1.1;
   }
-  .pf-page-hero h1 span { color: var(--gold); }
+  .pf-page-hero h1 span {
+    background: linear-gradient(135deg, #60a5fa, #93c5fd, #3b82f6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
   .pf-page-hero p { color: rgba(255,255,255,0.45); font-size: 1rem; }
+
+  /* Filter bar */
+  .pf-filter-bar {
+    display: flex; justify-content: center; gap: 0.6rem;
+    margin-bottom: 2.5rem;
+    animation: pfHeroIn 0.6s ease 0.2s both;
+  }
+  .pf-filter-btn {
+    padding: 0.5rem 1.4rem; border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.5); font-size: 0.85rem;
+    cursor: pointer; transition: all 0.25s; font-weight: 500;
+  }
+  .pf-filter-btn:hover {
+    border-color: var(--teal-light); color: var(--teal-light);
+  }
+  .pf-filter-btn.active {
+    background: var(--teal); border-color: var(--teal);
+    color: #fff;
+  }
 
   /* grid */
   .pf-grid {
@@ -642,23 +750,32 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
   }
+  /* Staggered card entrance */
   .pf-card {
     background: rgba(255,255,255,0.04);
-    border-radius: 12px; overflow: hidden;
+    border-radius: 14px; overflow: hidden;
     border: 1px solid rgba(255,255,255,0.08);
-    transition: transform 0.25s, box-shadow 0.25s;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
     position: relative;
+    opacity: 0; transform: translateY(24px);
+    animation: cardIn 0.5s ease forwards;
+  }
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0); }
   }
   .pf-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.35);
+    border-color: rgba(96,165,250,0.35);
   }
   .pf-card-media {
     width: 100%; aspect-ratio: 16/9;
-    background: #050e1c; position: relative;
+    background: #050e1c; position: relative; overflow: hidden;
   }
   .pf-card-media video,
-  .pf-card-media img   { width:100%; height:100%; object-fit:cover; display:block; }
+  .pf-card-media img   { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.4s; }
+  .pf-card:hover .pf-card-media img,
+  .pf-card:hover .pf-card-media video { transform: scale(1.04); }
   .pf-card-media iframe { width:100%; height:100%; border:none; display:block; }
   .pf-card-info { padding: 0.9rem 1.1rem; }
   .pf-card-title { color:#fff; font-weight:600; font-size:0.95rem; margin-bottom:0.25rem; }
@@ -668,15 +785,48 @@
     background: rgba(239,68,68,0.85); border: none; color: #fff;
     border-radius: 50%; width: 28px; height: 28px; font-size: 1rem;
     cursor: pointer; display: none; align-items: center; justify-content: center;
-    line-height: 1; transition: background 0.2s;
+    line-height: 1; transition: background 0.2s; z-index: 3;
   }
   .pf-card:hover .pf-card-del { display: flex; }
   .pf-card-del:hover { background: rgba(239,68,68,1); }
 
+  /* Play button overlay for videos */
+  .pf-play-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.25);
+    opacity: 0; transition: opacity 0.3s; z-index: 2;
+  }
+  .pf-card-media:hover .pf-play-overlay { opacity: 1; }
+  .pf-play-circle {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(59,130,246,0.85);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 8px rgba(59,130,246,0.2);
+    transform: scale(0.9); transition: transform 0.25s;
+  }
+  .pf-card-media:hover .pf-play-circle { transform: scale(1); }
+
+  /* Empty state */
   .pf-empty {
     grid-column: 1/-1; text-align: center;
-    color: rgba(255,255,255,0.28); padding: 5rem 1rem;
-    font-size: 1rem; line-height: 2;
+    padding: 5rem 1rem;
+  }
+  .pf-empty-icon {
+    font-size: 3.5rem; margin-bottom: 1rem;
+    animation: emptyFloat 3s ease-in-out infinite;
+    display: block;
+  }
+  @keyframes emptyFloat {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-10px); }
+  }
+  .pf-empty-title {
+    color: rgba(255,255,255,0.55); font-size: 1.1rem;
+    font-weight: 600; margin-bottom: 0.4rem;
+  }
+  .pf-empty-sub {
+    color: rgba(255,255,255,0.25); font-size: 0.88rem;
   }
 
   /* admin panel */
@@ -810,20 +960,6 @@
     h1 { font-size: 1.8rem; }
   }
 
-  /* ── Play button overlay on cards ── */
-  .pf-play-btn {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 3rem; color: rgba(255,255,255,0.9);
-    background: rgba(0,0,0,0.25);
-    opacity: 0; transition: opacity 0.2s;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
-    pointer-events: none;
-  }
-  .pf-zoom-btn { font-size: 2rem; }
-  .pf-card-media:hover .pf-play-btn { opacity: 1; }
-  .pf-card-media { cursor: pointer; }
-
   /* ── Lightbox ── */
   #pfLightbox {
     display: none; position: fixed; inset: 0; z-index: 900;
@@ -863,17 +999,6 @@
     #pfLbContent { border-radius: 8px; min-height: 200px; }
     #pfLbInner { gap: 0.5rem; }
   }
-
-  /* ── Card hover hint ── */
-  .pf-hover-hint {
-    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.85);
-    padding: 0.3rem 0.85rem; border-radius: 20px;
-    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.5px;
-    opacity: 0; transition: opacity 0.2s; pointer-events: none;
-    white-space: nowrap;
-  }
-  .pf-card-media:hover .pf-hover-hint { opacity: 1; }
 
   /* ── Video Modal ── */
   #pfVideoModal {
@@ -1014,6 +1139,8 @@
 
 <div id="mainSite">
 
+<div id="scrollProgressBar"></div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-logo" style="display:flex;align-items:center;gap:0.6rem;">
@@ -1047,7 +1174,7 @@
   <div class="hero-text">
     <div class="hero-badge">Peer Leader · 3D Artist · Community Worker</div>
     <h1>Mir Muhammad<span>Riyad</span></h1>
-    <p class="hero-tagline">UNICEF Peer Leader & Aspiring 3D Artist from Bangladesh</p>
+    <p class="hero-tagline"><span id="typingText"></span><span class="typing-cursor">|</span></p>
     <p class="hero-desc">
       A passionate community leader with 2+ years of experience working in UNICEF's child protection projects. 
       I educate peers on child safety, mental health, and life skills — while pursuing my creative side through 3D modelling in Blender.
@@ -1079,8 +1206,8 @@
 <section id="about">
   <div class="section-label">Get To Know Me</div>
   <h2 class="section-title">About <span>Me</span></h2>
-  <div class="about-grid fade-in">
-    <div>
+  <div class="about-grid">
+    <div class="fade-in">
       <div class="about-text">
         <p>I am a hard-working and friendly person from Naogaon, Bangladesh. I completed my Class 5 from Sultanpur North GOVT Primary School in 2022, and Class 8 from Par Naogaon High School in 2025.</p>
         <p>For over 2 years, I have served as a <strong>Peer Leader</strong> under UNICEF's child protection initiatives — working directly with young people in my community to raise awareness about child marriage, cyberbullying, violence, and mental health etc.</p>
@@ -1088,7 +1215,7 @@
         <p>I believe in lifelong learning and giving back to the community. I am always ready to take on new challenges and do my absolute best in everything I do.</p>
       </div>
     </div>
-    <div>
+    <div class="fade-in" style="transition-delay:0.15s">
       <div class="info-table">
         <div class="info-row">
           <span class="info-key">Full Name</span>
@@ -1261,7 +1388,7 @@
   <div class="section-label">Reach Out</div>
   <h2 class="section-title">Get In <span>Touch</span></h2>
   <p class="contact-subtitle">Feel free to reach out for collaboration, opportunities, or just to say hello!</p>
-  <div class="contact-cards">
+  <div class="contact-cards fade-in">
     <a href="tel:+8801787199337" class="contact-card">
       <span class="contact-card-icon">📞</span>
       <div class="contact-card-label">Phone / WhatsApp</div>
@@ -1311,8 +1438,16 @@
 
     <!-- Page hero -->
     <div class="pf-page-hero">
+      <div class="pf-hero-badge">✦ Creative Works</div>
       <h1>My <span>Portfolio</span></h1>
       <p>3D Animations, Blender works & creative projects</p>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="pf-filter-bar">
+      <button class="pf-filter-btn active" data-filter="all">All</button>
+      <button class="pf-filter-btn" data-filter="youtube">▶ Videos</button>
+      <button class="pf-filter-btn" data-filter="image">🖼 Images</button>
     </div>
 
     <!-- LOGIN BOX -->
@@ -1361,19 +1496,42 @@
       </div>
 
       <div class="pf-item-list" id="pfItemList"></div>
-      <div style="margin-top:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-        <button id="btnSaveDownload" style="background:var(--teal);border:none;color:#fff;font-size:0.85rem;font-weight:700;padding:0.6rem 1.2rem;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:0.5rem;">
-          ⬇ Save &amp; Download File
-        </button>
-        <div id="pfSaveHint" style="color:rgba(255,255,255,0.35);font-size:0.76rem;line-height:1.4;">Video add/delete করার পর এই button চাপো।<br>Download হওয়া index.html টা GitHub এ upload করো।</div>
-        <button id="btnAdminLogout" style="background:none;border:none;color:rgba(255,100,100,0.5);font-size:0.8rem;cursor:pointer;margin-left:auto;">Logout</button>
+
+      <!-- Save reminder banner - shows after add/delete -->
+      <div id="pfSaveBanner" style="display:none; margin-top:1.2rem;
+        background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(96,165,250,0.1));
+        border: 1px solid rgba(59,130,246,0.4); border-radius: 10px;
+        padding: 1rem 1.2rem;">
+        <div style="color:#fff; font-weight:700; font-size:0.9rem; margin-bottom:0.3rem;">
+          ✅ Added! এখন নিচের step follow করো:
+        </div>
+        <div style="color:rgba(255,255,255,0.6); font-size:0.8rem; line-height:1.8; margin-bottom:0.9rem;">
+          <span style="color:var(--teal-light);">Step 1:</span> নিচের button চেপে file download করো<br>
+          <span style="color:var(--teal-light);">Step 2:</span> GitHub repository তে গিয়ে পুরনো <code style="background:rgba(255,255,255,0.1);padding:0.1rem 0.4rem;border-radius:4px;">index.html</code> delete করো<br>
+          <span style="color:var(--teal-light);">Step 3:</span> Download হওয়া নতুন file upload করো — সবাই দেখতে পাবে
+        </div>
+        <div style="display:flex; gap:0.7rem; flex-wrap:wrap; align-items:center;">
+          <button id="btnSaveDownload" style="background:var(--teal);border:none;color:#fff;
+            font-size:0.88rem;font-weight:700;padding:0.65rem 1.4rem;border-radius:8px;
+            cursor:pointer;display:flex;align-items:center;gap:0.5rem;
+            box-shadow:0 4px 16px rgba(59,130,246,0.4);">
+            ⬇ Download Updated File
+          </button>
+          <div id="pfDownloadConfirm" style="color:rgba(255,255,255,0);font-size:0.82rem;transition:color 0.3s;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;display:flex;justify-content:flex-end;">
+        <button id="btnAdminLogout" style="background:none;border:none;color:rgba(255,100,100,0.45);font-size:0.8rem;cursor:pointer;">Logout</button>
       </div>
     </div>
 
     <!-- PORTFOLIO GRID -->
     <div class="pf-grid" id="pfGrid"></div>
     <div class="pf-empty" id="pfEmpty" style="display:none;">
-      No portfolio items yet.<br>Admin can add videos &amp; images.
+      <div class="pf-empty-icon">🎬</div>
+      <div class="pf-empty-title">No projects yet</div>
+      <div class="pf-empty-sub">Admin can add videos & images from the panel above.</div>
     </div>
 
   </div><!-- /pf-page-inner -->
@@ -1447,6 +1605,8 @@
 
 </div><!-- /pfPage -->
 
+<button id="backToTop" aria-label="Back to top">↑</button>
+
 <!-- ═══ PORTFOLIO DATA — baked into file, visible on ALL devices ═══ -->
 <script id="pf-data" type="application/json">
 [
@@ -1506,6 +1666,78 @@
     currentY = window.scrollY;
     targetY  = window.scrollY;
   };
+  // Back to top এর জন্য targetY reset করার function
+  window.smoothScrollToTop = () => {
+    paused = false;
+    targetY = 0;
+  };
+})();
+
+// ── Typing Animation ──
+(function() {
+  const phrases = [
+    'UNICEF Peer Leader',
+    'Aspiring 3D Artist',
+    'Community Advocate',
+    'Blender Enthusiast'
+  ];
+  const el = document.getElementById('typingText');
+  if (!el) return;
+  let pi = 0, ci = 0, deleting = false;
+  function tick() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+      el.textContent = phrase.slice(0, ++ci);
+      if (ci === phrase.length) {
+        deleting = true;
+        setTimeout(tick, 1800);
+        return;
+      }
+      setTimeout(tick, 75);
+    } else {
+      el.textContent = phrase.slice(0, --ci);
+      if (ci === 0) {
+        deleting = false;
+        pi = (pi + 1) % phrases.length;
+        setTimeout(tick, 400);
+        return;
+      }
+      setTimeout(tick, 40);
+    }
+  }
+  setTimeout(tick, 900);
+})();
+
+// ── Scroll Progress Bar & Back To Top ──
+(function() {
+  const bar = document.getElementById('scrollProgressBar');
+  const btn = document.getElementById('backToTop');
+  const expSection = document.getElementById('experience');
+
+  function getExpOffset() {
+    return expSection ? expSection.getBoundingClientRect().top + window.scrollY - 80 : 400;
+  }
+
+  function update() {
+    const scrollTop = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
+    if (bar) bar.style.width = pct + '%';
+  if (btn) btn.classList.toggle('visible', scrollTop > getExpOffset() && !pfPage().classList.contains('active'));
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+
+  if (btn) {
+    btn.addEventListener('click', function() {
+      if (typeof window.smoothScrollToTop === 'function') {
+        window.smoothScrollToTop();
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  }
 })();
 
 // Scroll animation
@@ -1542,8 +1774,16 @@ const countObserver = new IntersectionObserver((entries) => {
       countObserver.unobserve(e.target);
     }
   });
-}, { threshold: 0.5 });
-document.querySelectorAll('.stat-num[data-count]').forEach(el => countObserver.observe(el));
+}, { threshold: 0.3 });
+document.querySelectorAll('.stat-num[data-count]').forEach(el => {
+  const rect = el.getBoundingClientRect();
+  if (rect.top < window.innerHeight) {
+    // Already visible on load — animate after short delay
+    setTimeout(() => animateCountUp(el), 600);
+  } else {
+    countObserver.observe(el);
+  }
+});
 
 // ── Active Nav Link on Scroll ──
 const navSections = ['about','experience','skills','education','contact'];
@@ -1676,6 +1916,9 @@ function pfSave() {
   try { localStorage.setItem(PF_KEY, JSON.stringify(pfItems)); } catch(e) {}
   const el = document.getElementById('pf-data');
   if (el) el.textContent = JSON.stringify(pfItems);
+  // Banner দেখাও
+  const banner = document.getElementById('pfSaveBanner');
+  if (banner) banner.style.display = 'block';
 }
 
 function exportAndDownload() {
@@ -1707,18 +1950,23 @@ function openPortfolio() {
   document.getElementById('pfLogin').classList.remove('active');
   document.getElementById('pfAdminPanel').classList.remove('active');
   pfIsAdmin = false;
+  document.getElementById('backToTop')?.classList.remove('visible');
   history.pushState({ portfolio: true }, '', '#portfolio');
   renderGrid();
 }
 
 function closePortfolio() {
-  if (window.smoothScrollResume) window.smoothScrollResume();
-  document.querySelectorAll('#pfGrid video').forEach(v => v.pause());
-  closeLightbox();
-  pfPage().classList.remove('active');
-  mainSite().style.display = '';
-  window.scrollTo(0, 0);
-  if (location.hash === '#portfolio') history.pushState({}, '', location.pathname);
+  const page = pfPage();
+  page.classList.add('closing');
+  setTimeout(() => {
+    if (window.smoothScrollResume) window.smoothScrollResume();
+    document.querySelectorAll('#pfGrid video').forEach(v => v.pause());
+    closeLightbox();
+    page.classList.remove('active', 'closing');
+    mainSite().style.display = '';
+    window.scrollTo(0, 0);
+    if (location.hash === '#portfolio') history.pushState({}, '', location.pathname);
+  }, 320);
 }
 
 // Browser back/forward
@@ -1897,29 +2145,42 @@ function closeVideoModal() {
 function setupProgressClick() {} // no-op for Streamable
 
 // ── Render grid ──
+let pfActiveFilter = 'all';
+
 function renderGrid() {
   const grid  = document.getElementById('pfGrid');
   const empty = document.getElementById('pfEmpty');
   grid.innerHTML = '';
-  if (!pfItems.length) { empty.style.display = 'block'; return; }
+
+  const filtered = pfActiveFilter === 'all'
+    ? pfItems
+    : pfItems.filter(i => i.type === pfActiveFilter);
+
+  if (!filtered.length) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
-  pfItems.forEach(item => {
+  filtered.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'pf-card';
+    card.style.animationDelay = (index * 0.08) + 's';
 
     const mediaDiv = document.createElement('div');
     mediaDiv.className = 'pf-card-media';
 
     if (item.type === 'youtube') {
-      // Streamable thumbnail — use Streamable's thumbnail API
       const sid = (item.src.match(/streamable\.com\/([a-zA-Z0-9]+)/) || ['', item.src])[1];
       const thumbUrl = `https://cdn-cf-east.streamable.com/image/${sid}.jpg`;
       const fallback = `https://cdn-cf-east.streamable.com/image/${sid}.png`;
       mediaDiv.innerHTML = `
         <img src="${thumbUrl}" onerror="this.src='${fallback}';this.onerror=null;" alt="${item.title}"
           style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
-        <div class="pf-hover-hint">&#9654; Play</div>`;
+        <div class="pf-play-overlay">
+          <div class="pf-play-circle">
+            <svg viewBox="0 0 24 24" fill="white" width="26" height="26" style="margin-left:3px">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>`;
       mediaDiv.style.cursor = 'pointer';
       mediaDiv.addEventListener('click', () => openVideoModal(item));
     } else if (item.type === 'video') {
@@ -1933,8 +2194,8 @@ function renderGrid() {
         <img src="${item.src}" alt="${item.title}" loading="lazy"
           style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
         <div class="pf-play-overlay">
-          <div class="pf-play-circle" style="background:rgba(0,0,0,0.45);">
-            <svg viewBox="0 0 24 24" fill="white" width="30" height="30" style="margin-left:3px">
+          <div class="pf-play-circle">
+            <svg viewBox="0 0 24 24" fill="white" width="26" height="26" style="margin-left:3px">
               <path d="M8 5v14l11-7z"/>
             </svg>
           </div>
@@ -1962,6 +2223,16 @@ function renderGrid() {
     grid.appendChild(card);
   });
 }
+
+// Filter button logic
+document.querySelectorAll('.pf-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pf-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    pfActiveFilter = btn.dataset.filter;
+    renderGrid();
+  });
+});
 
 // ── Render admin list ──
 function renderAdminList() {
@@ -2019,13 +2290,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Save & Download
   document.getElementById('btnSaveDownload').addEventListener('click', () => {
     exportAndDownload();
-    const hint = document.getElementById('pfSaveHint');
-    hint.style.color = 'var(--teal-light)';
-    hint.textContent = '✓ Download হচ্ছে! এই file টা GitHub এ upload করো।';
-    setTimeout(() => {
-      hint.style.color = 'rgba(255,255,255,0.35)';
-      hint.innerHTML = 'Video add/delete করার পর এই button চাপো।<br>Download হওয়া index.html টা GitHub এ upload করো।';
-    }, 4000);
+    const confirm = document.getElementById('pfDownloadConfirm');
+    if (confirm) {
+      confirm.textContent = '✓ Download হচ্ছে!';
+      confirm.style.color = '#86efac';
+      setTimeout(() => { confirm.style.color = 'rgba(255,255,255,0)'; }, 3000);
+    }
   });
 
   // Lightbox close
