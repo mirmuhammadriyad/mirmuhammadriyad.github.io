@@ -1816,14 +1816,17 @@
   update();
 
   if (btn) {
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function scrollToTop(e) {
+      if (e) e.preventDefault();
+      // Desktop এ custom scroll loop আছে — সেটা use করো
+      if (window.innerWidth > 700 && typeof window.smoothScrollToTop === 'function') {
+        window.smoothScrollToTop();
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
     btn.addEventListener('click', scrollToTop);
-    btn.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      scrollToTop();
-    }, { passive: false });
+    btn.addEventListener('touchstart', scrollToTop, { passive: false });
   }
 })();
 
@@ -1965,12 +1968,19 @@ function smoothScrollTo(targetY, duration) {
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
-    closeMenu();
     const target = document.querySelector(link.getAttribute('href'));
     if (!target) return;
     const navHeight = document.querySelector('nav').offsetHeight;
     const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
-    smoothScrollTo(top, 900);
+    const isMobile = window.innerWidth <= 700;
+    // Mobile: close menu and scroll at the same time — no waiting
+    if (isMobile) {
+      closeMenu();
+      smoothScrollTo(top, 500);
+    } else {
+      closeMenu();
+      smoothScrollTo(top, 900);
+    }
   });
 });
 
