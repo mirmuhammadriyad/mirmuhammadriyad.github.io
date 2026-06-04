@@ -853,7 +853,44 @@
   .pf-card:hover .pf-card-del { display: flex; }
   .pf-card-del:hover { background: rgba(239,68,68,1); }
 
-  /* Play button overlay for videos */
+  /* ── Type badge (top-left corner) ── */
+  .pf-type-badge {
+    position: absolute; top: 9px; left: 9px; z-index: 3;
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(6,14,28,0.72);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 6px;
+    padding: 3px 8px 3px 6px;
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.4px; text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .pf-type-badge.type-video { border-color: rgba(96,165,250,0.4); color: #93c5fd; }
+  .pf-type-badge.type-image { border-color: rgba(167,243,208,0.35); color: #6ee7b7; }
+
+  /* ── Category tag in card info ── */
+  .pf-card-meta {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 5px;
+  }
+  .pf-cat-tag {
+    font-size: 0.68rem; font-weight: 600;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 4px;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--teal-light);
+  }
+  .pf-cat-tag.tag-image {
+    background: rgba(16,185,129,0.12);
+    border-color: rgba(16,185,129,0.3);
+    color: #6ee7b7;
+  }
+
+  /* Play button overlay for VIDEOS */
   .pf-play-overlay {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
@@ -870,15 +907,95 @@
   }
   .pf-card-media:hover .pf-play-circle { transform: scale(1); }
 
+  /* View/zoom overlay for IMAGES — no play button */
+  .pf-view-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35);
+    opacity: 0; transition: opacity 0.3s; z-index: 2;
+  }
+  .pf-card-media:hover .pf-view-overlay { opacity: 1; }
+  .pf-view-circle {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.6);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.08);
+    transform: scale(0.85); transition: transform 0.25s, background 0.25s;
+  }
+  .pf-card-media:hover .pf-view-circle {
+    transform: scale(1);
+    background: rgba(255,255,255,0.25);
+  }
+
+  /* ── Improved Image Lightbox ── */
+  #pfImgLightbox {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.96);
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    padding: 1rem;
+    animation: lbFadeIn 0.25s ease;
+  }
+  #pfImgLightbox.active { display: flex; }
+  #pfImgLbHeader {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent);
+    z-index: 10;
+  }
+  #pfImgLbTitle {
+    color: #fff; font-weight: 600; font-size: 1rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 75%;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+  }
+  #pfImgLbClose {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; width: 40px; height: 40px; border-radius: 50%;
+    font-size: 1.2rem; cursor: pointer; transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  #pfImgLbClose:hover { background: rgba(239,68,68,0.75); }
+  #pfImgLbImgWrap {
+    display: flex; align-items: center; justify-content: center;
+    max-width: 95vw; max-height: 90vh;
+  }
+  #pfImgLbImg {
+    max-width: 95vw; max-height: 90vh;
+    object-fit: contain; border-radius: 8px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+    display: block;
+    transition: opacity 0.3s;
+  }
+  #pfImgLbFooter {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+    text-align: center;
+    color: rgba(255,255,255,0.45); font-size: 0.8rem;
+  }
+  /* Loading spinner for image lightbox */
+  .pf-img-spinner {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: var(--teal-light);
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #pfImgLbImg.loading + .pf-img-spinner,
+  .pf-img-spinner.visible { display: block; }
+
   /* Empty state */
   .pf-empty {
     grid-column: 1/-1; text-align: center;
     padding: 5rem 1rem;
   }
   .pf-empty-icon {
-    font-size: 3.5rem; margin-bottom: 1rem;
+    margin-bottom: 1rem;
     animation: emptyFloat 3s ease-in-out infinite;
-    display: block;
+    display: flex; justify-content: center;
   }
   @keyframes emptyFloat {
     0%,100% { transform: translateY(0); }
@@ -1532,9 +1649,15 @@
 
     <!-- FILTER TABS -->
     <div class="pf-filter-bar">
-      <button class="pf-filter-btn active" data-filter="all">All</button>
-      <button class="pf-filter-btn" data-filter="youtube">▶ Videos</button>
-      <button class="pf-filter-btn" data-filter="image">🖼 Images</button>
+      <button class="pf-filter-btn active" data-filter="all">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:-2px;margin-right:5px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>All
+      </button>
+      <button class="pf-filter-btn" data-filter="youtube">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="vertical-align:-2px;margin-right:5px"><path d="M8 5v14l11-7z"/></svg>Videos
+      </button>
+      <button class="pf-filter-btn" data-filter="image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:-2px;margin-right:5px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Images
+      </button>
     </div>
 
     <!-- LOGIN BOX -->
@@ -1552,8 +1675,12 @@
       <div class="pf-admin-title">⚙ Admin Panel — Add New Content</div>
 
       <div class="pf-type-tabs">
-        <button class="pf-tab active" id="tabYt">▶ Streamable Video</button>
-        <button class="pf-tab" id="tabImg">🖼 Image URL</button>
+        <button class="pf-tab active" id="tabYt">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" style="vertical-align:-1px;margin-right:4px"><path d="M8 5v14l11-7z"/></svg>Streamable Video
+        </button>
+        <button class="pf-tab" id="tabImg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="vertical-align:-1px;margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Image URL
+        </button>
       </div>
 
       <!-- Streamable -->
@@ -1579,7 +1706,7 @@
           <input class="pf-input" type="text" id="pfImgUrl" placeholder="Image URL (e.g. https://i.imgur.com/...)" />
           <button class="pf-add-btn" id="btnAddImage">+ Add</button>
         </div>
-        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Imgur বা Google Drive এ upload করে link দাও — সবাই দেখতে পাবে।</p>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:-0.2rem;">✅ Google Drive শেয়ার লিংক দিলেও কাজ করবে — drive.google.com/file/d/... টাইপের লিংক সরাসরি paste করো।</p>
       </div>
 
       <div class="pf-item-list" id="pfItemList"></div>
@@ -1616,7 +1743,15 @@
     <!-- PORTFOLIO GRID -->
     <div class="pf-grid" id="pfGrid"></div>
     <div class="pf-empty" id="pfEmpty" style="display:none;">
-      <div class="pf-empty-icon">🎬</div>
+      <div class="pf-empty-icon">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+          <rect x="4" y="12" width="56" height="40" rx="6" stroke="rgba(255,255,255,0.18)" stroke-width="2.5"/>
+          <path d="M4 32h56" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+          <circle cx="20" cy="26" r="5" stroke="rgba(96,165,250,0.4)" stroke-width="2"/>
+          <path d="M4 46l14-10 8 6 12-12 22 16" stroke="rgba(96,165,250,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M40 22v12M34 28h12" stroke="rgba(255,255,255,0.22)" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="pf-empty-title">No projects yet</div>
       <div class="pf-empty-sub">Admin can add videos & images from the panel above.</div>
     </div>
@@ -1624,7 +1759,7 @@
   </div><!-- /pf-page-inner -->
 
   <footer style="text-align:center;padding:2rem;color:rgba(255,255,255,0.3);font-size:0.8rem;border-top:1px solid rgba(255,255,255,0.06);">
-    © 2025 Mir Muhammad Riyad · All rights reserved
+    © 2026 Mir Muhammad Riyad · All rights reserved
   </footer>
 
   <!-- LIGHTBOX -->
@@ -1642,6 +1777,18 @@
     </div>
     <div id="pfLbContent"></div>
   </div>
+</div>
+
+<!-- IMAGE LIGHTBOX (dedicated, beautiful viewer) -->
+<div id="pfImgLightbox">
+  <div id="pfImgLbHeader">
+    <span id="pfImgLbTitle"></span>
+    <button id="pfImgLbClose">✕</button>
+  </div>
+  <div id="pfImgLbImgWrap">
+    <img id="pfImgLbImg" src="" alt="" />
+  </div>
+  <div id="pfImgLbFooter">Click outside or press Esc to close</div>
 </div>
 
 <!-- VIDEO MODAL (outside pfPage so fixed positioning works correctly) -->
@@ -1699,7 +1846,16 @@
   {"id":1,"type":"youtube","title":"Animation 1","desc":"","src":"https://streamable.com/tuo2ul"},
   {"id":2,"type":"youtube","title":"Animation 2","desc":"","src":"https://streamable.com/2cql24"},
   {"id":3,"type":"youtube","title":"Animation 3","desc":"","src":"https://streamable.com/zlozkw"},
-  {"id":4,"type":"youtube","title":"Animation 4","desc":"","src":"https://streamable.com/xly322"}
+  {"id":4,"type":"youtube","title":"Animation 4","desc":"","src":"https://streamable.com/xly322"},
+  {"id":5,"type":"youtube","title":"Animation 5","desc":"","src":"https://streamable.com/om7l60"},
+  {"id":6,"type":"youtube","title":"Animation 6","desc":"","src":"https://streamable.com/t68khj"},
+  {"id":7,"type":"image","title":"Picture 1","desc":"","src":"https://drive.google.com/uc?export=view&id=1EYUotWS3puUk0GAOkyyGRcJyWLQ5MvJ3"},
+  {"id":8,"type":"image","title":"Picture 2","desc":"","src":"https://drive.google.com/uc?export=view&id=1X7dUVkZ3N6x6k0h09zcpAFXgnnIbnOmo"},
+  {"id":9,"type":"image","title":"Picture 3","desc":"","src":"https://drive.google.com/uc?export=view&id=17pInc7A0ofwhZ0l9-RzcYZ64qQBcnkcP"},
+  {"id":10,"type":"image","title":"Picture 4","desc":"","src":"https://drive.google.com/uc?export=view&id=1-Vuc5-iI_coTUeGYOqZbiSY72vwTLBM6"},
+  {"id":11,"type":"image","title":"Picture 5","desc":"","src":"https://drive.google.com/uc?export=view&id=1t1AzB4BaypOT8_bqMBSdmmwnooc_P7dX"},
+  {"id":12,"type":"image","title":"Picture 6","desc":"","src":"https://drive.google.com/uc?export=view&id=1fMZxOqQGRVvIjZT9ZSM3H9p8uZYvTsBd"},
+  {"id":13,"type":"image","title":"Picture 7","desc":"","src":"https://drive.google.com/uc?export=view&id=1fOEkDQ00u4hQJXA-W4kvtfPTgmNKDQfn"}
 ]
 </script>
 
@@ -2161,7 +2317,36 @@ function deleteItem(id) {
 }
 
 // ══════════════════════════════════════════
-// LIGHTBOX — click to play full screen
+// IMAGE LIGHTBOX — beautiful full-screen viewer
+// ══════════════════════════════════════════
+let imgLbOpen = false;
+
+function openImageLightbox(item) {
+  const lb = document.getElementById('pfImgLightbox');
+  const img = document.getElementById('pfImgLbImg');
+  document.getElementById('pfImgLbTitle').textContent = item.title;
+
+  const src = convertGDriveUrl(item.src);
+  img.style.opacity = '0';
+  img.src = src;
+  img.onload = () => { img.style.opacity = '1'; };
+  img.onerror = () => { img.style.opacity = '0.5'; };
+
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  imgLbOpen = true;
+}
+
+function closeImageLightbox() {
+  if (!imgLbOpen) return;
+  document.getElementById('pfImgLightbox').classList.remove('active');
+  document.getElementById('pfImgLbImg').src = '';
+  document.body.style.overflow = '';
+  imgLbOpen = false;
+}
+
+// ══════════════════════════════════════════
+// LIGHTBOX — click to play full screen (VIDEO/STREAMABLE only)
 // ══════════════════════════════════════════
 let lbOpen = false;
 
@@ -2241,6 +2426,21 @@ function closeVideoModal() {
 
 function setupProgressClick() {} // no-op for Streamable
 
+// ── Google Drive URL converter ──
+function convertGDriveUrl(url) {
+  if (!url) return url;
+  // Format: https://drive.google.com/file/d/FILE_ID/view
+  let m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://lh3.googleusercontent.com/d/${m[1]}`;
+  // Format: https://drive.google.com/open?id=FILE_ID
+  m = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://lh3.googleusercontent.com/d/${m[1]}`;
+  // Format: https://drive.google.com/uc?id=FILE_ID
+  m = url.match(/drive\.google\.com\/uc\?.*id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://lh3.googleusercontent.com/d/${m[1]}`;
+  return url;
+}
+
 // ── Render grid ──
 let pfActiveFilter = 'all';
 
@@ -2271,6 +2471,9 @@ function renderGrid() {
       mediaDiv.innerHTML = `
         <img src="${thumbUrl}" onerror="this.src='${fallback}';this.onerror=null;" alt="${item.title}"
           style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
+        <div class="pf-type-badge type-video">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M8 5v14l11-7z"/></svg>Video
+        </div>
         <div class="pf-play-overlay">
           <div class="pf-play-circle">
             <svg viewBox="0 0 24 24" fill="white" width="26" height="26" style="margin-left:3px">
@@ -2282,23 +2485,34 @@ function renderGrid() {
       mediaDiv.addEventListener('click', () => openVideoModal(item));
     } else if (item.type === 'video') {
       mediaDiv.innerHTML = `
+        <div class="pf-type-badge type-video">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M8 5v14l11-7z"/></svg>Video
+        </div>
         <video controls preload="metadata"
           style="width:100%;height:100%;object-fit:cover;display:block;background:#000;">
           <source src="${item.src}" type="video/mp4">
         </video>`;
     } else {
+      const imgSrc = convertGDriveUrl(item.src);
       mediaDiv.innerHTML = `
-        <img src="${item.src}" alt="${item.title}" loading="lazy"
-          style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
-        <div class="pf-play-overlay">
-          <div class="pf-play-circle">
-            <svg viewBox="0 0 24 24" fill="white" width="26" height="26" style="margin-left:3px">
-              <path d="M8 5v14l11-7z"/>
+        <img src="${imgSrc}" alt="${item.title}" loading="lazy"
+          style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;"
+          onerror="this.style.opacity='0.3'">
+        <div class="pf-type-badge type-image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10" height="10"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><path d="M21 15l-5-5L5 21"/></svg>Image
+        </div>
+        <div class="pf-view-overlay">
+          <div class="pf-view-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/>
+              <line x1="8" y1="11" x2="14" y2="11"/>
             </svg>
           </div>
         </div>`;
       mediaDiv.style.cursor = 'pointer';
-      mediaDiv.addEventListener('click', () => openLightbox(item));
+      mediaDiv.addEventListener('click', () => openImageLightbox(item));
     }
 
     if (pfIsAdmin) {
@@ -2313,7 +2527,7 @@ function renderGrid() {
     const infoDiv = document.createElement('div');
     infoDiv.className = 'pf-card-info';
     infoDiv.innerHTML = `<div class="pf-card-title">${item.title}</div>
-      ${item.desc ? `<div class="pf-card-desc">${item.desc}</div>` : ''}`;
+      ${item.desc ? `<div class="pf-card-desc">${item.desc}</div>` : ''}`; 
 
     card.appendChild(mediaDiv);
     card.appendChild(infoDiv);
@@ -2342,12 +2556,12 @@ function renderAdminList() {
   pfItems.forEach(item => {
     const row = document.createElement('div');
     row.className = 'pf-item-row';
-    const icon = item.type === 'youtube' ? '▶' : item.type === 'image' ? '🖼' : '🎬';
+    const icon = item.type === 'youtube' ? '[VID]' : item.type === 'image' ? '[IMG]' : '[MP4]';
     const delBtn = document.createElement('button');
     delBtn.className = 'pf-del-btn';
     delBtn.textContent = 'Delete';
     delBtn.addEventListener('click', () => deleteItem(item.id));
-    row.innerHTML = `<span>${icon} ${item.title}</span>`;
+    row.innerHTML = `<span><code style="font-size:0.72rem;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:3px;color:var(--teal-light);margin-right:4px;">${icon}</code>${item.title}</span>`;
     row.appendChild(delBtn);
     list.appendChild(row);
   });
@@ -2356,6 +2570,7 @@ function renderAdminList() {
 // ── Keyboard shortcuts ──
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
+    if (imgLbOpen) { closeImageLightbox(); return; }
     if (modalOpen) { closeVideoModal(); return; }
     if (lbOpen) { closeLightbox(); return; }
     if (pfPage().classList.contains('active')) closePortfolio();
@@ -2393,6 +2608,12 @@ document.addEventListener('DOMContentLoaded', () => {
       confirm.style.color = '#86efac';
       setTimeout(() => { confirm.style.color = 'rgba(255,255,255,0)'; }, 3000);
     }
+  });
+
+  // Image lightbox
+  document.getElementById('pfImgLbClose').addEventListener('click', closeImageLightbox);
+  document.getElementById('pfImgLightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('pfImgLightbox')) closeImageLightbox();
   });
 
   // Lightbox close
