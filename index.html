@@ -2040,7 +2040,7 @@
     const docH = document.documentElement.scrollHeight - window.innerHeight;
     const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
     if (bar) bar.style.width = pct + '%';
-  const showBtns = scrollTop > 150 && !pfPage().classList.contains('active');
+  const showBtns = scrollTop > 800 && !pfPage().classList.contains('active');
   if (btn) btn.classList.toggle('visible', showBtns);
   const waBtn = document.getElementById('whatsappBtn');
   if (waBtn) waBtn.classList.toggle('visible', showBtns);
