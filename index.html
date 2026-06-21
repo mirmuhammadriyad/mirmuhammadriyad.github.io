@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 
+<!-- Refresh করলে browser আগের scroll position মনে রেখে সেখানে নিয়ে যায় (scroll restoration) —
+     এটা বন্ধ করে দেওয়া হলো যাতে refresh করলে সবসময় top থেকে শুরু হয়। -->
+<script>
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+</script>
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BR2R95P2WE"></script>
 <script>
@@ -55,20 +61,20 @@
   "knowsAbout": ["3D Modelling", "Blender", "Child Protection", "Community Awareness", "Peer Leadership"]
 }
 </script>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,4 93,27 93,73 50,96 7,73 7,27' fill='%230c1f3f' stroke='%233b82f6' stroke-width='3'/%3E%3Cline x1='28' y1='2' x2='72' y2='2' stroke='%233b82f6' stroke-width='4' stroke-linecap='round'/%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%23ffffff' stroke-width='7'%3E%3Cline x1='14' y1='64' x2='14' y2='36'/%3E%3Cline x1='14' y1='36' x2='26' y2='56'/%3E%3Cline x1='26' y1='56' x2='38' y2='36'/%3E%3Cline x1='38' y1='36' x2='38' y2='64'/%3E%3C/g%3E%3Cg stroke='%233b82f6' stroke-width='7'%3E%3Cline x1='44' y1='64' x2='44' y2='36'/%3E%3Cline x1='44' y1='36' x2='56' y2='56'/%3E%3Cline x1='56' y1='56' x2='68' y2='36'/%3E%3Cline x1='68' y1='36' x2='68' y2='64'/%3E%3C/g%3E%3Cg stroke='%2360a5fa' stroke-width='7'%3E%3Cline x1='68' y1='36' x2='84' y2='36'/%3E%3Cpath d='M84,36 C96,36 96,56 84,56'/%3E%3Cline x1='68' y1='56' x2='84' y2='56'/%3E%3Cline x1='84' y1='56' x2='92' y2='70'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,4 93,27 93,73 50,96 7,73 7,27' fill='%230a0a0a' stroke='%23d4af37' stroke-width='3'/%3E%3Cline x1='28' y1='2' x2='72' y2='2' stroke='%23d4af37' stroke-width='4' stroke-linecap='round'/%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%23ffffff' stroke-width='7'%3E%3Cline x1='14' y1='64' x2='14' y2='36'/%3E%3Cline x1='14' y1='36' x2='26' y2='56'/%3E%3Cline x1='26' y1='56' x2='38' y2='36'/%3E%3Cline x1='38' y1='36' x2='38' y2='64'/%3E%3C/g%3E%3Cg stroke='%23d4af37' stroke-width='7'%3E%3Cline x1='44' y1='64' x2='44' y2='36'/%3E%3Cline x1='44' y1='36' x2='56' y2='56'/%3E%3Cline x1='56' y1='56' x2='68' y2='36'/%3E%3Cline x1='68' y1='36' x2='68' y2='64'/%3E%3C/g%3E%3Cg stroke='%23e6c875' stroke-width='7'%3E%3Cline x1='68' y1='36' x2='84' y2='36'/%3E%3Cpath d='M84,36 C96,36 96,56 84,56'/%3E%3Cline x1='68' y1='56' x2='84' y2='56'/%3E%3Cline x1='84' y1='56' x2='92' y2='70'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy:       #0c1f3f;
-    --teal:       #3b82f6;
-    --teal-light: #60a5fa;
-    --gold:       #93c5fd;
-    --cream:      #f0f4ff;
-    --text:       #0f172a;
-    --muted:      #475569;
-    --card-bg:    #ffffff;
-    --border:     #dbeafe;
+    --bg:         #0a0a0a;
+    --gold:       #d4af37;
+    --gold-light: #e6c875;
+    --gold-dark:  #1a1408;
+    --cream:      #161616;
+    --text:       #f5f1e8;
+    --muted:      #9a9a9a;
+    --card-bg:    #161616;
+    --border:     #2a2a2a;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -94,19 +100,19 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     overflow-x: hidden;
     max-width: 100%;
   }
 
   /* Custom smooth scrollbar (desktop) */
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb {
-    background: var(--teal);
+    background: var(--gold);
     border-radius: 10px;
   }
-  ::-webkit-scrollbar-thumb:hover { background: var(--teal-light); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -121,18 +127,18 @@
   /* ─── NAV ─── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(10,22,40,0.97);
+    background: rgba(10,10,10,0.97);
     backdrop-filter: blur(12px);
     display: flex; justify-content: space-between; align-items: center;
     padding: 1rem 2.5rem;
-    border-bottom: 1px solid rgba(59,130,246,0.3);
+    border-bottom: 1px solid rgba(212,175,55,0.3);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
   .nav-logo {
     font-family: 'Playfair Display', serif;
-    color: var(--teal-light); font-size: 1.3rem; font-weight: 700;
+    color: var(--gold-light); font-size: 1.3rem; font-weight: 700;
     letter-spacing: 0.5px;
     flex: 1;
     min-width: 0;
@@ -147,16 +153,16 @@
     font-size: 0.875rem; font-weight: 500; letter-spacing: 0.5px;
     transition: color 0.3s;
   }
-  .nav-links a:hover { color: var(--teal-light); }
+  .nav-links a:hover { color: var(--gold-light); }
   .nav-links a.nav-active {
-    color: var(--teal-light);
+    color: var(--gold-light);
     position: relative;
   }
   .nav-links a.nav-active::after {
     content: '';
     position: absolute; bottom: -4px; left: 0; right: 0;
     height: 2px;
-    background: var(--teal-light);
+    background: var(--gold-light);
     border-radius: 2px;
     animation: navUnderline 0.3s ease forwards;
   }
@@ -211,9 +217,9 @@
       top: 56px; left: 0; right: 0;
       width: 100%;
       box-sizing: border-box;
-      background: rgba(8,18,34,0.98);
+      background: rgba(8,8,8,0.98);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(59,130,246,0.25);
+      border-bottom: 1px solid rgba(212,175,55,0.25);
       flex-direction: column;
       gap: 0;
       list-style: none;
@@ -265,7 +271,7 @@
       content: '';
       display: inline-block;
       width: 3px; height: 3px;
-      background: var(--teal-light);
+      background: var(--gold-light);
       border-radius: 50%;
       margin-right: 0.75rem;
       opacity: 0;
@@ -273,8 +279,8 @@
       flex-shrink: 0;
     }
     .nav-links li a:hover {
-      background: rgba(59,130,246,0.1);
-      color: var(--teal-light);
+      background: rgba(212,175,55,0.1);
+      color: var(--gold-light);
       padding-left: 1.8rem;
     }
     .nav-links li a:hover::before { opacity: 1; }
@@ -283,7 +289,7 @@
   /* ─── HERO ─── */
   .hero {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--navy) 0%, #0f2a5c 60%, #0c2347 100%);
+    background: linear-gradient(135deg, var(--bg) 0%, #141414 60%, #0a0a0a 100%);
     display: grid; grid-template-columns: 1fr 1fr;
     align-items: center; gap: 0;
     position: relative; overflow: hidden;
@@ -293,7 +299,7 @@
     content: '';
     position: absolute; top: -100px; right: -100px;
     width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none; z-index: 0;
   }
@@ -301,7 +307,7 @@
     content: '';
     position: absolute; bottom: -50px; left: -50px;
     width: 250px; height: 250px;
-    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none; z-index: 0;
   }
@@ -315,20 +321,20 @@
   }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(13,148,136,0.15); border: 1px solid rgba(13,148,136,0.4);
-    color: var(--teal-light); padding: 0.4rem 1rem;
+    background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.4);
+    color: var(--gold-light); padding: 0.4rem 1rem;
     border-radius: 50px; font-size: 0.8rem; font-weight: 500;
     letter-spacing: 1px; text-transform: uppercase;
     margin-bottom: 1.5rem;
   }
-  .hero-badge::before { content: '●'; font-size: 0.5rem; color: var(--teal-light); }
+  .hero-badge::before { content: '●'; font-size: 0.5rem; color: var(--gold-light); }
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(2.5rem, 5vw, 3.8rem);
     font-weight: 900; color: #fff;
     line-height: 1.1; margin-bottom: 0.5rem;
   }
-  h1 span { color: var(--teal-light); display: block; }
+  h1 span { color: var(--gold-light); display: block; }
   .hero-tagline {
     font-size: 1.1rem; color: rgba(255,255,255,0.6);
     margin-bottom: 1.5rem; font-weight: 300;
@@ -358,34 +364,34 @@
     flex-shrink: 0;
   }
   .btn-primary {
-    background: var(--teal); color: #fff;
+    background: var(--gold); color: var(--gold-dark);
     border: none;
   }
   .btn-primary:hover {
-    background: var(--teal-light); transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(59,130,246,0.4);
+    background: var(--gold-light); transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212,175,55,0.4);
   }
   .btn-portfolio {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: #fff; border: none;
+    background: linear-gradient(135deg, #d4af37, #b8932c);
+    color: var(--gold-dark); border: none;
   }
   .btn-portfolio:hover {
     filter: brightness(1.1); transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(59,130,246,0.5);
+    box-shadow: 0 8px 25px rgba(212,175,55,0.5);
   }
   .btn-secondary {
     background: transparent; color: rgba(255,255,255,0.85);
     border: 1px solid rgba(255,255,255,0.25);
   }
   .btn-secondary:hover {
-    border-color: var(--teal-light); color: var(--teal-light);
+    border-color: var(--gold-light); color: var(--gold-light);
     transform: translateY(-2px);
   }
 
   /* ─── TYPING CURSOR ─── */
   .typing-cursor {
     display: inline-block;
-    color: var(--teal-light);
+    color: var(--gold-light);
     font-weight: 300;
     animation: cursorBlink 0.75s step-end infinite;
     margin-left: 1px;
@@ -399,10 +405,10 @@
   #scrollProgressBar {
     position: fixed; top: 0; left: 0; z-index: 9999;
     height: 3px; width: 0%;
-    background: linear-gradient(90deg, var(--teal), var(--teal-light), #93c5fd);
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), #f0d896);
     transition: width 0.1s linear;
     pointer-events: none;
-    box-shadow: 0 0 8px rgba(59,130,246,0.6);
+    box-shadow: 0 0 8px rgba(212,175,55,0.6);
   }
 
   /* ─── BACK TO TOP BUTTON ─── */
@@ -414,11 +420,11 @@
 
   #backToTop {
     width: 48px; height: 48px; border-radius: 50%;
-    background: var(--teal);
-    border: none; color: #fff;
+    background: var(--gold);
+    border: none; color: var(--gold-dark);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; font-size: 1.2rem; font-weight: bold;
-    box-shadow: 0 4px 20px rgba(59,130,246,0.55);
+    box-shadow: 0 4px 20px rgba(212,175,55,0.55);
     opacity: 0; transform: translateY(20px);
     transition: opacity 0.35s, transform 0.35s, background 0.2s;
     pointer-events: none;
@@ -430,13 +436,13 @@
     pointer-events: auto !important;
   }
   #backToTop:hover {
-    background: var(--teal-light);
-    box-shadow: 0 6px 24px rgba(59,130,246,0.7);
+    background: var(--gold-light);
+    box-shadow: 0 6px 24px rgba(212,175,55,0.7);
     transform: translateY(-4px);
   }
   #backToTop:active {
     transform: scale(0.92);
-    background: var(--teal-light);
+    background: var(--gold-light);
   }
 
   /* WhatsApp button */
@@ -488,7 +494,7 @@
     content: '';
     position: absolute; inset: -3px;
     border-radius: 22px; z-index: 0;
-    background: linear-gradient(135deg, var(--teal) 0%, #818cf8 50%, var(--teal-light) 100%);
+    background: linear-gradient(135deg, var(--gold) 0%, #b8932c 50%, var(--gold-light) 100%);
     opacity: 0.85;
     animation: frameGlow 4s ease-in-out infinite alternate;
   }
@@ -500,7 +506,7 @@
     content: '';
     position: absolute; inset: -28px;
     border-radius: 36px; z-index: -1;
-    background: radial-gradient(ellipse at center, rgba(59,130,246,0.3) 0%, transparent 65%);
+    background: radial-gradient(ellipse at center, rgba(212,175,55,0.3) 0%, transparent 65%);
     filter: blur(18px);
     animation: frameGlow 4s ease-in-out infinite alternate-reverse;
   }
@@ -525,7 +531,7 @@
   .stat-num {
     font-family: 'Playfair Display', serif;
     font-size: 1.6rem; font-weight: 700;
-    color: var(--teal-light); display: block;
+    color: var(--gold-light); display: block;
   }
   .stat-label {
     font-size: 0.7rem; color: rgba(255,255,255,0.55);
@@ -536,7 +542,7 @@
   section { padding: 5rem 5rem; }
   .section-label {
     font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--teal);
+    text-transform: uppercase; color: var(--gold);
     margin-bottom: 0.5rem;
   }
   .section-title {
@@ -544,16 +550,17 @@
     font-size: 2.2rem; font-weight: 700; color: var(--text);
     margin-bottom: 3rem;
   }
-  .section-title span { color: var(--teal); }
+  .section-title span { color: var(--gold); }
 
   /* ─── ABOUT ─── */
-  #about { background: #fff; }
+  #about { background: var(--bg); }
   .about-grid {
     display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem;
     align-items: center;
   }
   .about-text { font-size: 1.05rem; line-height: 1.9; color: var(--muted); }
   .about-text p { margin-bottom: 1.2rem; }
+  .about-text strong { color: var(--gold-light); font-weight: 600; }
   .info-table {
     background: var(--cream); border-radius: 16px;
     padding: 2rem; border: 1px solid var(--border);
@@ -568,27 +575,27 @@
   .info-val { color: var(--text); font-weight: 600; text-align: right; }
 
   /* ─── EXPERIENCE ─── */
-  #experience { background: var(--cream); }
+  #experience { background: var(--bg); }
   .exp-card {
-    background: #fff; border-radius: 20px;
+    background: var(--cream); border-radius: 20px;
     border: 1px solid var(--border);
     padding: 2.5rem; position: relative; overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
   }
   .exp-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.15);
   }
   .exp-card::before {
     content: ''; position: absolute; top: 0; left: 0;
     width: 4px; height: 100%;
-    background: linear-gradient(to bottom, var(--teal), var(--teal-light));
+    background: linear-gradient(to bottom, var(--gold), var(--gold-light));
   }
   .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
   .exp-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--text); }
-  .exp-org { font-size: 0.9rem; color: var(--teal); font-weight: 600; margin-bottom: 0.3rem; }
+  .exp-org { font-size: 0.9rem; color: var(--gold); font-weight: 600; margin-bottom: 0.3rem; }
   .exp-period {
-    background: rgba(59,130,246,0.1); color: var(--teal);
+    background: rgba(212,175,55,0.1); color: var(--gold);
     padding: 0.3rem 0.8rem; border-radius: 50px;
     font-size: 0.78rem; font-weight: 600; white-space: nowrap;
   }
@@ -599,19 +606,19 @@
     padding-left: 1.5rem; position: relative; line-height: 1.6;
   }
   .exp-bullets li::before {
-    content: '▸'; color: var(--teal); position: absolute; left: 0;
+    content: '▸'; color: var(--gold); position: absolute; left: 0;
   }
   .project-tag {
     display: inline-block; margin-right: 0.5rem; margin-bottom: 0.5rem;
-    background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);
-    color: var(--teal); padding: 0.2rem 0.6rem;
+    background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);
+    color: var(--gold); padding: 0.2rem 0.6rem;
     border-radius: 4px; font-size: 0.75rem; font-weight: 600;
   }
 
   /* ─── SKILLS ─── */
-  #skills { background: var(--navy); }
+  #skills { background: var(--bg); }
   #skills .section-title { color: #fff; }
-  #skills .section-label { color: var(--teal-light); }
+  #skills .section-label { color: var(--gold-light); }
   .skills-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
   .skill-category {
     background: rgba(255,255,255,0.05);
@@ -620,12 +627,27 @@
     transition: all 0.3s;
   }
   .skill-category:hover {
-    background: rgba(59,130,246,0.1);
-    border-color: rgba(59,130,246,0.3);
+    background: rgba(212,175,55,0.1);
+    border-color: rgba(212,175,55,0.3);
     transform: translateY(-3px);
   }
   .skill-cat-icon {
-    font-size: 2rem; margin-bottom: 0.8rem; display: block;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.25);
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  }
+  .skill-cat-icon svg {
+    width: 21px; height: 21px;
+    color: var(--gold-light);
+  }
+  .skill-category:hover .skill-cat-icon {
+    background: rgba(212,175,55,0.18);
+    border-color: var(--gold);
+    transform: scale(1.06);
   }
   .skill-cat-name {
     font-family: 'Playfair Display', serif;
@@ -649,8 +671,8 @@
     pointer-events: none;
   }
   .skill-tag:hover {
-    background: var(--teal); color: #fff;
-    box-shadow: 0 0 10px rgba(59,130,246,0.5), 0 0 20px rgba(59,130,246,0.2);
+    background: var(--gold); color: var(--gold-dark);
+    box-shadow: 0 0 10px rgba(212,175,55,0.5), 0 0 20px rgba(212,175,55,0.2);
     transform: translateY(-1px);
   }
   .skill-tag:hover::before {
@@ -658,12 +680,12 @@
   }
 
   /* ─── EDUCATION ─── */
-  #education { background: #fff; }
+  #education { background: var(--bg); }
   .edu-timeline { position: relative; }
   .edu-timeline::before {
     content: ''; position: absolute;
     left: 24px; top: 0; bottom: 0; width: 2px;
-    background: linear-gradient(to bottom, var(--teal), rgba(59,130,246,0.1));
+    background: linear-gradient(to bottom, var(--gold), rgba(212,175,55,0.1));
   }
   .edu-item {
     display: flex; gap: 2rem; margin-bottom: 2.5rem;
@@ -671,18 +693,18 @@
   }
   .edu-dot {
     width: 50px; height: 50px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 1.2rem; flex-shrink: 0;
     position: relative; z-index: 1;
-    box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+    box-shadow: 0 4px 12px rgba(212,175,55,0.4);
   }
   .edu-content {
     background: var(--cream); border-radius: 12px;
     padding: 1.5rem; flex: 1; border: 1px solid var(--border);
   }
   .edu-year {
-    font-size: 0.8rem; color: var(--teal); font-weight: 600;
+    font-size: 0.8rem; color: var(--gold); font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.5px;
     margin-bottom: 0.3rem;
   }
@@ -694,10 +716,10 @@
 
   /* ─── CONTACT ─── */
   #contact {
-    background: linear-gradient(135deg, var(--navy) 0%, #0f2a5c 100%);
+    background: linear-gradient(135deg, var(--bg) 0%, #141414 100%);
     text-align: center;
   }
-  #contact .section-label { color: var(--teal-light); }
+  #contact .section-label { color: var(--gold-light); }
   #contact .section-title { color: #fff; text-align: center; }
   .contact-subtitle {
     font-size: 1.05rem; color: rgba(255,255,255,0.6);
@@ -715,17 +737,17 @@
     min-width: 200px;
   }
   .contact-card:hover {
-    background: rgba(59,130,246,0.15);
-    border-color: rgba(59,130,246,0.4);
+    background: rgba(212,175,55,0.15);
+    border-color: rgba(212,175,55,0.4);
     transform: translateY(-4px);
   }
   .contact-card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; display: block; }
-  .contact-card-label { font-size: 0.75rem; color: var(--teal-light); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .contact-card-label { font-size: 0.75rem; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
   .contact-card-value { font-size: 0.88rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; word-break: break-all; }
 
   /* ─── FOOTER ─── */
   footer {
-    background: var(--navy);
+    background: var(--bg);
     border-top: 1px solid rgba(255,255,255,0.06);
     padding: 1.5rem 5rem;
     display: flex; justify-content: space-between; align-items: center;
@@ -750,12 +772,51 @@
     opacity: 1; transform: translateY(0);
   }
 
+  /* ─── INTRO LOADER ─── */
+  #introLoader {
+    position: fixed; inset: 0; z-index: 100000;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #introLoader.intro-hide {
+    opacity: 0; visibility: hidden; pointer-events: none;
+  }
+  .intro-content {
+    display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+  }
+  .intro-logo {
+    opacity: 0; animation: introLogoIn 0.8s ease 0.1s forwards;
+  }
+  @keyframes introLogoIn {
+    from { opacity: 0; transform: scale(0.72); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .intro-name {
+    font-family: 'Playfair Display', serif;
+    color: var(--text); font-size: 1.05rem; letter-spacing: 1.5px;
+    opacity: 0; animation: introTextIn 0.6s ease 0.65s forwards;
+  }
+  @keyframes introTextIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .intro-bar {
+    width: 140px; height: 2px; border-radius: 2px;
+    background: rgba(212,175,55,0.15); overflow: hidden; margin-top: 0.3rem;
+  }
+  .intro-bar-fill {
+    height: 100%; width: 0%; background: var(--gold);
+    animation: introBarFill 1.5s ease 0.3s forwards;
+  }
+  @keyframes introBarFill { to { width: 100%; } }
+
 
   /* ─── PORTFOLIO FULL PAGE ─── */
   #pfPage {
     display: none;
     position: fixed; inset: 0; z-index: 500;
-    background: #060e1c;
+    background: #0a0a0a;
     overflow-y: auto;
   }
   #pfPage.active {
@@ -777,9 +838,9 @@
   /* Navbar */
   .pf-navbar {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(5,14,28,0.97);
+    background: rgba(5,5,5,0.97);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(59,130,246,0.25);
+    border-bottom: 1px solid rgba(212,175,55,0.25);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.9rem 2rem; gap: 1rem;
   }
@@ -793,8 +854,8 @@
     white-space: nowrap;
   }
   .pf-back-btn:hover {
-    background: rgba(59,130,246,0.15);
-    border-color: var(--teal-light); color: var(--teal-light);
+    background: rgba(212,175,55,0.15);
+    border-color: var(--gold-light); color: var(--gold-light);
     transform: translateX(-3px);
   }
   .pf-back-arrow { font-size: 1rem; transition: transform 0.25s; }
@@ -804,7 +865,7 @@
     font-family: 'Playfair Display', serif;
     font-size: 1.15rem; color: #fff; flex: 1; text-align: center;
   }
-  .pf-nav-title span { color: var(--teal-light); }
+  .pf-nav-title span { color: var(--gold-light); }
 
   .pf-admin-btn {
     background: rgba(255,255,255,0.06);
@@ -832,9 +893,9 @@
   }
   .pf-hero-badge {
     display: inline-block;
-    background: rgba(59,130,246,0.12);
-    border: 1px solid rgba(59,130,246,0.3);
-    color: var(--teal-light); border-radius: 50px;
+    background: rgba(212,175,55,0.12);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: var(--gold-light); border-radius: 50px;
     padding: 0.3rem 1rem; font-size: 0.78rem;
     letter-spacing: 1.5px; text-transform: uppercase;
     font-weight: 600; margin-bottom: 1rem;
@@ -845,7 +906,7 @@
     line-height: 1.1;
   }
   .pf-page-hero h1 span {
-    background: linear-gradient(135deg, #60a5fa, #93c5fd, #3b82f6);
+    background: linear-gradient(135deg, #e6c875, #f0d896, #d4af37);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
@@ -865,10 +926,10 @@
     cursor: pointer; transition: all 0.25s; font-weight: 500;
   }
   .pf-filter-btn:hover {
-    border-color: var(--teal-light); color: var(--teal-light);
+    border-color: var(--gold-light); color: var(--gold-light);
   }
   .pf-filter-btn.active {
-    background: var(--teal); border-color: var(--teal);
+    background: var(--gold); border-color: var(--gold);
     color: #fff;
   }
 
@@ -893,12 +954,12 @@
   }
   .pf-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.35);
-    border-color: rgba(96,165,250,0.35);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(230,200,117,0.35);
+    border-color: rgba(230,200,117,0.35);
   }
   .pf-card-media {
     width: 100%; aspect-ratio: 16/9;
-    background: #050e1c; position: relative; overflow: hidden;
+    background: #050505; position: relative; overflow: hidden;
   }
   .pf-card-media video,
   .pf-card-media img   { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.4s; }
@@ -922,7 +983,7 @@
   .pf-type-badge {
     position: absolute; top: 9px; left: 9px; z-index: 3;
     display: flex; align-items: center; gap: 4px;
-    background: rgba(6,14,28,0.72);
+    background: rgba(10,10,10,0.72);
     backdrop-filter: blur(6px);
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 6px;
@@ -933,7 +994,7 @@
     pointer-events: none;
     transition: opacity 0.25s;
   }
-  .pf-type-badge.type-video { border-color: rgba(96,165,250,0.4); color: #93c5fd; }
+  .pf-type-badge.type-video { border-color: rgba(230,200,117,0.4); color: #f0d896; }
   .pf-type-badge.type-image { border-color: rgba(167,243,208,0.35); color: #6ee7b7; }
 
   /* ── Category tag in card info ── */
@@ -945,9 +1006,9 @@
     font-size: 0.68rem; font-weight: 600;
     letter-spacing: 0.5px; text-transform: uppercase;
     padding: 2px 7px; border-radius: 4px;
-    background: rgba(59,130,246,0.15);
-    border: 1px solid rgba(59,130,246,0.3);
-    color: var(--teal-light);
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: var(--gold-light);
   }
   .pf-cat-tag.tag-image {
     background: rgba(16,185,129,0.12);
@@ -965,9 +1026,9 @@
   .pf-card-media:hover .pf-play-overlay { opacity: 1; }
   .pf-play-circle {
     width: 56px; height: 56px; border-radius: 50%;
-    background: rgba(59,130,246,0.85);
+    background: rgba(212,175,55,0.85);
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 0 8px rgba(59,130,246,0.2);
+    box-shadow: 0 0 0 8px rgba(212,175,55,0.2);
     transform: scale(0.9); transition: transform 0.25s;
   }
   .pf-card-media:hover .pf-play-circle { transform: scale(1); }
@@ -1044,7 +1105,7 @@
   .pf-img-spinner {
     width: 40px; height: 40px; border-radius: 50%;
     border: 3px solid rgba(255,255,255,0.15);
-    border-top-color: var(--teal-light);
+    border-top-color: var(--gold-light);
     animation: spin 0.7s linear infinite;
     display: none;
   }
@@ -1096,7 +1157,7 @@
     padding: 0.6rem 0.9rem; font-size: 0.87rem; outline: none;
     transition: border-color 0.2s;
   }
-  .pf-input:focus { border-color: var(--teal-light); }
+  .pf-input:focus { border-color: var(--gold-light); }
   .pf-input::placeholder { color: rgba(255,255,255,0.28); }
   .pf-type-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
   .pf-tab {
@@ -1104,9 +1165,9 @@
     cursor: pointer; border: 1px solid rgba(255,255,255,0.14);
     background: none; color: rgba(255,255,255,0.45); transition: all 0.2s;
   }
-  .pf-tab.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .pf-tab.active { background: var(--gold); border-color: var(--gold); color: var(--gold-dark); }
   .pf-add-btn {
-    background: var(--gold); color: #0a1628; border: none;
+    background: var(--gold); color: var(--gold-dark); border: none;
     padding: 0.6rem 1.4rem; border-radius: 7px;
     font-weight: 700; cursor: pointer; font-size: 0.87rem;
     transition: filter 0.2s; white-space: nowrap;
@@ -1395,7 +1456,7 @@
     overflow: visible;
   }
   #pfProgressFill {
-    height: 100%; width: 0%; background: #fff;
+    height: 100%; width: 0%; background: var(--gold);
     border-radius: 4px; transition: width 0.3s linear;
     pointer-events: none;
   }
@@ -1403,7 +1464,7 @@
     position: absolute; top: 50%; right: calc(100% - 0%);
     transform: translate(50%, -50%);
     width: 13px; height: 13px; border-radius: 50%;
-    background: #fff; opacity: 0;
+    background: var(--gold); opacity: 0;
     transition: opacity 0.15s;
     pointer-events: none;
   }
@@ -1419,9 +1480,127 @@
     .pf-ctrl-big { width: 56px; height: 56px; }
   }
 
+  /* ─── CUSTOM CURSOR (desktop / mouse devices only) ───
+     Subtle dot + trailing ring. Hidden by default; only activates
+     once JS confirms a real mouse pointer is present (see script below),
+     so touchscreens always keep their normal native cursor behavior.
+
+     Color: white + mix-blend-mode:difference. এই trick এর কারণে cursor
+     যেই background এর উপর আছে তার সাপেক্ষে automatically contrast করা
+     রঙে দেখাবে — তাই dark section এ একরকম, আর gold button এর উপর
+     গেলেও gold-এর সাথে মিশে যাবে না, আলাদা করে চোখে পড়বে। */
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 999999;
+    will-change: transform;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: #ffffff;
+    transition: opacity 0.25s ease;
+  }
+  .cursor-ring {
+    width: 30px; height: 30px;
+    border: 1.5px solid #ffffff;
+    background: transparent;
+    transition: width 0.25s cubic-bezier(0.4,0,0.2,1),
+                height 0.25s cubic-bezier(0.4,0,0.2,1),
+                opacity 0.25s ease,
+                border-width 0.25s ease;
+  }
+  .cursor-ring.hover {
+    width: 48px; height: 48px;
+    border-width: 2px;
+  }
+  /* Hide our custom cursor on text fields so the native text(I-beam)
+     cursor shows clearly instead */
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
+  }
+  body.has-custom-cursor input,
+  body.has-custom-cursor textarea {
+    cursor: text !important;
+  }
+
 </style>
 </head>
 <body>
+
+<div id="introLoader">
+  <div class="intro-content">
+    <svg class="intro-logo" width="84" height="84" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="50,4 93,27 93,73 50,96 7,73 7,27" fill="#0a0a0a" stroke="#d4af37" stroke-width="3"/>
+      <line x1="28" y1="2" x2="72" y2="2" stroke="#d4af37" stroke-width="4" stroke-linecap="round"/>
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke="#f5f1e8" stroke-width="7"><line x1="14" y1="64" x2="14" y2="36"/><line x1="14" y1="36" x2="26" y2="56"/><line x1="26" y1="56" x2="38" y2="36"/><line x1="38" y1="36" x2="38" y2="64"/></g>
+        <g stroke="#d4af37" stroke-width="7"><line x1="44" y1="64" x2="44" y2="36"/><line x1="44" y1="36" x2="56" y2="56"/><line x1="56" y1="56" x2="68" y2="36"/><line x1="68" y1="36" x2="68" y2="64"/></g>
+        <g stroke="#e6c875" stroke-width="7"><line x1="68" y1="36" x2="84" y2="36"/><path d="M84,36 C96,36 96,56 84,56" fill="none"/><line x1="68" y1="56" x2="84" y2="56"/><line x1="84" y1="56" x2="92" y2="70"/></g>
+      </g>
+    </svg>
+    <div class="intro-name">Mir Muhammad Riyad</div>
+    <div class="intro-bar"><div class="intro-bar-fill"></div></div>
+  </div>
+</div>
+<script>
+(function () {
+  var loader = document.getElementById('introLoader');
+  if (!loader) return;
+
+  var HOLD_TIME = 1900;  // how long the loader stays visible (ms)
+  var FADE_TIME = 650;   // fade-out transition duration (ms), must match CSS transition
+
+  // Refresh করার পরেও কোনো কারণে browser যদি আগের scroll position এ
+  // নিয়ে যাওয়ার চেষ্টা করে, সেটা override করে top এ আনা হচ্ছে।
+  // (URL এ #section থাকলে এটা skip করা হচ্ছে, যাতে direct section link কাজ করে)
+  if (!window.location.hash && (window.scrollY !== 0 || document.documentElement.scrollTop !== 0)) {
+    window.scrollTo(0, 0);
+  }
+
+  document.documentElement.style.overflow = 'hidden';
+
+  var unlocked = false;
+  function unlockScroll() {
+    if (unlocked) return;
+    unlocked = true;
+    document.documentElement.style.overflow = '';
+    if (!window.location.hash) window.scrollTo(0, 0);
+  }
+
+  var hidden = false;
+  function hideLoader() {
+    if (hidden) return;
+    hidden = true;
+    loader.classList.add('intro-hide');
+    unlockScroll();
+    window.dispatchEvent(new Event('introLoaderHidden'));
+    setTimeout(function () { loader.style.display = 'none'; }, FADE_TIME);
+  }
+
+  // Start the loader timer as soon as the DOM is ready — do NOT wait for
+  // window.load, since that event waits for every image/video on the page
+  // to finish downloading and can fire many seconds late, which is what
+  // was causing the long scroll delay after the loader disappeared.
+  function startSequence() {
+    setTimeout(hideLoader, HOLD_TIME);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startSequence);
+  } else {
+    startSequence();
+  }
+
+  // Safety net: if HOLD_TIME somehow never fires (e.g. a browser quirk),
+  // force the loader to hide and the scroll loop to resume after a max wait.
+  setTimeout(hideLoader, HOLD_TIME + FADE_TIME + 3000);
+})();
+</script>
 
 <div id="mainSite">
 
@@ -1431,15 +1610,15 @@
 <nav>
   <div class="nav-logo" style="display:flex;align-items:center;gap:0.6rem;">
     <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;">
-      <polygon points="50,4 93,27 93,73 50,96 7,73 7,27" fill="#0c1f3f" stroke="#3b82f6" stroke-width="3"/>
-      <line x1="28" y1="2" x2="72" y2="2" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="50,4 93,27 93,73 50,96 7,73 7,27" fill="#0a0a0a" stroke="#d4af37" stroke-width="3"/>
+      <line x1="28" y1="2" x2="72" y2="2" stroke="#d4af37" stroke-width="4" stroke-linecap="round"/>
       <g fill="none" stroke-linecap="round" stroke-linejoin="round">
         <g stroke="#ffffff" stroke-width="7"><line x1="14" y1="64" x2="14" y2="36"/><line x1="14" y1="36" x2="26" y2="56"/><line x1="26" y1="56" x2="38" y2="36"/><line x1="38" y1="36" x2="38" y2="64"/></g>
-        <g stroke="#3b82f6" stroke-width="7"><line x1="44" y1="64" x2="44" y2="36"/><line x1="44" y1="36" x2="56" y2="56"/><line x1="56" y1="56" x2="68" y2="36"/><line x1="68" y1="36" x2="68" y2="64"/></g>
-        <g stroke="#60a5fa" stroke-width="7"><line x1="68" y1="36" x2="84" y2="36"/><path d="M84,36 C96,36 96,56 84,56" fill="none"/><line x1="68" y1="56" x2="84" y2="56"/><line x1="84" y1="56" x2="92" y2="70"/></g>
+        <g stroke="#d4af37" stroke-width="7"><line x1="44" y1="64" x2="44" y2="36"/><line x1="44" y1="36" x2="56" y2="56"/><line x1="56" y1="56" x2="68" y2="36"/><line x1="68" y1="36" x2="68" y2="64"/></g>
+        <g stroke="#e6c875" stroke-width="7"><line x1="68" y1="36" x2="84" y2="36"/><path d="M84,36 C96,36 96,56 84,56" fill="none"/><line x1="68" y1="56" x2="84" y2="56"/><line x1="84" y1="56" x2="92" y2="70"/></g>
       </g>
     </svg>
-    <span style="font-family:'Playfair Display',serif;color:#60a5fa;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;white-space:nowrap;">Mir Muhammad Riyad</span>
+    <span style="font-family:'Playfair Display',serif;color:#e6c875;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;white-space:nowrap;">Mir Muhammad Riyad</span>
   </div>
   <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
     <span class="bar"></span>
@@ -1566,7 +1745,7 @@
   <h2 class="section-title" style="color:#fff;">My <span>Skills</span></h2>
   <div class="skills-grid">
     <div class="skill-category fade-in">
-      <span class="skill-cat-icon">🎨</span>
+      <div class="skill-cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12v9"/><path d="M12 12l8-4.5"/><path d="M12 12L4 7.5"/></svg></div>
       <div class="skill-cat-name">Technical Skills</div>
       <div class="skill-tags">
         <span class="skill-tag">Blender (3D Modelling)</span>
@@ -1576,7 +1755,7 @@
       </div>
     </div>
     <div class="skill-category fade-in">
-      <span class="skill-cat-icon">🤝</span>
+      <div class="skill-cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="2.8"/><path d="M3.5 19c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="16.5" cy="9" r="2.2"/><path d="M14 19c0-2.2 1.4-4 3.8-4 2 0 3.7 1.4 4.2 3.4"/></svg></div>
       <div class="skill-cat-name">Professional Skills</div>
       <div class="skill-tags">
         <span class="skill-tag">Community Engagement</span>
@@ -1589,7 +1768,7 @@
       </div>
     </div>
     <div class="skill-category fade-in">
-      <span class="skill-cat-icon">💡</span>
+      <div class="skill-cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.6 1 1.3 1 2.1V16h6v-.4c0-.8.3-1.5 1-2.1A6 6 0 0 0 12 3z"/></svg></div>
       <div class="skill-cat-name">Soft Skills</div>
       <div class="skill-tags">
         <span class="skill-tag">Leadership</span>
@@ -1600,7 +1779,7 @@
       </div>
     </div>
     <div class="skill-category fade-in">
-      <span class="skill-cat-icon">💻</span>
+      <div class="skill-cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="M9.5 9l-2 2 2 2"/><path d="M14.5 9l2 2-2 2"/></svg></div>
       <div class="skill-cat-name">Software</div>
       <div class="skill-tags">
         <span class="skill-tag">Microsoft Word</span>
@@ -1611,7 +1790,7 @@
       </div>
     </div>
     <div class="skill-category fade-in">
-      <span class="skill-cat-icon">🌍</span>
+      <div class="skill-cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 4 5.8 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.8-4-9s1.5-6.5 4-9z"/></svg></div>
       <div class="skill-cat-name">Languages</div>
       <div class="skill-tags">
         <span class="skill-tag">Bengali (Native)</span>
@@ -1619,7 +1798,7 @@
       </div>
     </div>
     <div class="skill-category fade-in">
-      <span class="skill-cat-icon">🎯</span>
+      <div class="skill-cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.2"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></div>
       <div class="skill-cat-name">Areas of Focus</div>
       <div class="skill-tags">
         <span class="skill-tag">Child Protection</span>
@@ -1680,7 +1859,7 @@
   <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 2.5rem;">
     <div class="section-label" style="text-align:center; margin-bottom:0.5rem;">Reference</div>
     <p style="color:rgba(255,255,255,0.7); font-size:0.9rem;">
-      <strong style="color:var(--teal-light);">Amit Saha</strong> — Assistant Teacher, Mathematics<br>
+      <strong style="color:var(--gold-light);">Amit Saha</strong> — Assistant Teacher, Mathematics<br>
       Naogaon Zilla School &nbsp;|&nbsp; 📞 +880 1722 612 364
     </p>
   </div>
@@ -1781,22 +1960,22 @@
 
       <!-- Save reminder banner - shows after add/delete -->
       <div id="pfSaveBanner" style="display:none; margin-top:1.2rem;
-        background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(96,165,250,0.1));
-        border: 1px solid rgba(59,130,246,0.4); border-radius: 10px;
+        background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(230,200,117,0.1));
+        border: 1px solid rgba(212,175,55,0.4); border-radius: 10px;
         padding: 1rem 1.2rem;">
         <div style="color:#fff; font-weight:700; font-size:0.9rem; margin-bottom:0.3rem;">
           ✅ Added! এখন নিচের step follow করো:
         </div>
         <div style="color:rgba(255,255,255,0.6); font-size:0.8rem; line-height:1.8; margin-bottom:0.9rem;">
-          <span style="color:var(--teal-light);">Step 1:</span> নিচের button চেপে file download করো<br>
-          <span style="color:var(--teal-light);">Step 2:</span> GitHub repository তে গিয়ে পুরনো <code style="background:rgba(255,255,255,0.1);padding:0.1rem 0.4rem;border-radius:4px;">index.html</code> delete করো<br>
-          <span style="color:var(--teal-light);">Step 3:</span> Download হওয়া নতুন file upload করো — সবাই দেখতে পাবে
+          <span style="color:var(--gold-light);">Step 1:</span> নিচের button চেপে file download করো<br>
+          <span style="color:var(--gold-light);">Step 2:</span> GitHub repository তে গিয়ে পুরনো <code style="background:rgba(255,255,255,0.1);padding:0.1rem 0.4rem;border-radius:4px;">index.html</code> delete করো<br>
+          <span style="color:var(--gold-light);">Step 3:</span> Download হওয়া নতুন file upload করো — সবাই দেখতে পাবে
         </div>
         <div style="display:flex; gap:0.7rem; flex-wrap:wrap; align-items:center;">
-          <button id="btnSaveDownload" style="background:var(--teal);border:none;color:#fff;
+          <button id="btnSaveDownload" style="background:var(--gold);border:none;color:var(--gold-dark);
             font-size:0.88rem;font-weight:700;padding:0.65rem 1.4rem;border-radius:8px;
             cursor:pointer;display:flex;align-items:center;gap:0.5rem;
-            box-shadow:0 4px 16px rgba(59,130,246,0.4);">
+            box-shadow:0 4px 16px rgba(212,175,55,0.4);">
             ⬇ Download Updated File
           </button>
           <div id="pfDownloadConfirm" style="color:rgba(255,255,255,0);font-size:0.82rem;transition:color 0.3s;"></div>
@@ -1815,8 +1994,8 @@
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
           <rect x="4" y="12" width="56" height="40" rx="6" stroke="rgba(255,255,255,0.18)" stroke-width="2.5"/>
           <path d="M4 32h56" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-          <circle cx="20" cy="26" r="5" stroke="rgba(96,165,250,0.4)" stroke-width="2"/>
-          <path d="M4 46l14-10 8 6 12-12 22 16" stroke="rgba(96,165,250,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="26" r="5" stroke="rgba(230,200,117,0.4)" stroke-width="2"/>
+          <path d="M4 46l14-10 8 6 12-12 22 16" stroke="rgba(230,200,117,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M40 22v12M34 28h12" stroke="rgba(255,255,255,0.22)" stroke-width="2.5" stroke-linecap="round"/>
         </svg>
       </div>
@@ -1940,54 +2119,96 @@
 // SMOOTH SCROLL — vanilla, no library needed
 // ══════════════════════════════════════════
 (function() {
+  // ── ইনার্শিয়া-ভিত্তিক স্মুথ স্ক্রল (velocity + friction) ──
+  // আগের দুটো ভার্সনের সমস্যা ছিল:
+  //  ১) lerp(ease=0.10) → বড় gap catch-up করতে সময় লাগত (delay)
+  //  ২) lerp + MAX_GAP clamp → sensitivity কমে যায়, কারণ প্রতি wheel
+  //     event এ movement জোর করে ছোট রাখা হতো
+  //
+  // এই ভার্সনে target/gap clamp করার বদলে সরাসরি velocity ব্যবহার করা হচ্ছে:
+  //  - প্রতিটা wheel event সরাসরি velocity তে যুক্ত হয় (কোনো cap নেই,
+  //    তাই full sensitivity বজায় থাকে — জোরে scroll করলে জোরে-ই যাবে)
+  //  - প্রতি ফ্রেমে velocity position এ apply হয় এবং friction দিয়ে কমে
+  //  - কোনো backlog জমে না, কারণ position প্রতি ফ্রেমেই move করে — তাই
+  //    delay/freeze থাকে না, কিন্তু friction এর কারণে glide/smooth feel থাকে
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-  let currentY  = window.scrollY;
-  let targetY   = window.scrollY;
+  let position  = window.scrollY;
+  let velocity  = 0;
   let rafId     = null;
   let paused    = false;
 
-  const ease = 0.10; // lower = smoother/slower, higher = snappier
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
+  const FRICTION = 0.93;  // প্রতি ফ্রেমে velocity এর কত % থাকে (কম = তাড়াতাড়ি থামে, বেশি = বেশি glide)
+  const WHEEL_MULT = 0.24; // wheel sensitivity — আরও কমানো হলো (আগে 0.32 ছিল)
 
   function tick() {
     if (paused) { rafId = requestAnimationFrame(tick); return; }
-    currentY = lerp(currentY, targetY, ease);
-    const diff = Math.abs(targetY - currentY);
-    if (diff < 0.5) {
-      currentY = targetY;
+
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+
+    if (Math.abs(velocity) > 0.05) {
+      position += velocity;
+      velocity *= FRICTION;
+
+      // boundary তে পৌঁছালে velocity বন্ধ করে দাও, bounce না করুক
+      if (position <= 0) { position = 0; velocity = 0; }
+      if (position >= maxScroll) { position = maxScroll; velocity = 0; }
+
+      window.scrollTo(0, position);
+    } else {
+      velocity = 0;
+      // idle থাকলে actual scroll position এর সাথে sync রাখো
+      // (keyboard scroll, scrollbar drag, touch ইত্যাদির জন্য)
+      position = window.scrollY;
     }
-    window.scrollTo(0, currentY);
     rafId = requestAnimationFrame(tick);
   }
 
   window.addEventListener('wheel', e => {
     if (paused) return;
     e.preventDefault();
-    targetY = Math.max(0, Math.min(
-      document.body.scrollHeight - window.innerHeight,
-      targetY + e.deltaY * 1.2
-    ));
+    velocity += e.deltaY * WHEEL_MULT;
   }, { passive: false });
 
-  // Touch: native scroll on mobile is already smooth, skip override
   if (!isMobile) {
     rafId = requestAnimationFrame(tick);
   }
 
   // Pause when portfolio or modal is open (they have their own scroll)
-  window.smoothScrollPause  = () => { paused = true; };
+  window.smoothScrollPause  = () => { paused = true; velocity = 0; };
   window.smoothScrollResume = () => {
     paused = false;
-    currentY = window.scrollY;
-    targetY  = window.scrollY;
+    position = window.scrollY;
+    velocity = 0;
   };
-  // Back to top এর জন্য targetY reset করার function
+  // Back to top
+  // Note: আগে এখানে native window.scrollTo({behavior:'smooth'}) ব্যবহার হতো।
+  // সমস্যা: PC তে OS/browser এর "reduce motion" / animation off থাকলে
+  // browser নিজে থেকেই native smooth scroll বন্ধ করে দেয় (instant jump করে),
+  // কারণ এটা prefers-reduced-motion সেটিং মেনে চলে। তাই এখন নিজেদের
+  // RAF-based smoothScrollTo() ব্যবহার করা হচ্ছে, যেটা OS সেটিং এর উপর
+  // নির্ভর করে না — সবসময় animate করেই top এ যাবে।
   window.smoothScrollToTop = () => {
-    paused = false;
-    targetY = 0;
+    if (typeof smoothScrollTo === 'function') {
+      smoothScrollTo(0, 700);
+    } else {
+      paused = true;
+      velocity = 0;
+      window.scrollTo(0, 0);
+      position = 0;
+      velocity = 0;
+      paused = false;
+    }
   };
+
+  // Keyboard scroll এর পর position sync রাখো
+  window.addEventListener('keydown', e => {
+    const keys = ['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '];
+    if (keys.includes(e.key)) {
+      velocity = 0;
+      requestAnimationFrame(() => { position = window.scrollY; });
+    }
+  });
 })();
 
 // ── Typing Animation ──
@@ -2052,8 +2273,7 @@
   if (btn) {
     function scrollToTop(e) {
       if (e) e.preventDefault();
-      // Desktop এ custom scroll loop আছে — সেটা use করো
-      if (window.innerWidth > 700 && typeof window.smoothScrollToTop === 'function') {
+      if (typeof window.smoothScrollToTop === 'function') {
         window.smoothScrollToTop();
       } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2073,6 +2293,21 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Safety net: কোনো কারণে (e.g. loader-এর scroll lock এর সাথে timing
+// race) IntersectionObserver যদি কোনো fade-in element মিস করে আর সেটা
+// blank/invisible থেকে যায়, এই ফাংশন সেগুলো জোর করে visible করে দেয়।
+function revealVisibleFadeIns() {
+  document.querySelectorAll('.fade-in:not(.visible)').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) {
+      el.classList.add('visible');
+    }
+  });
+}
+window.addEventListener('introLoaderHidden', revealVisibleFadeIns);
+window.addEventListener('load', revealVisibleFadeIns);
+setTimeout(revealVisibleFadeIns, 2500);
 
 // ── Count-Up Animation ──
 function animateCountUp(el) {
@@ -2640,7 +2875,7 @@ function renderAdminList() {
     delBtn.className = 'pf-del-btn';
     delBtn.textContent = 'Delete';
     delBtn.addEventListener('click', () => deleteItem(item.id));
-    row.innerHTML = `<span><code style="font-size:0.72rem;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:3px;color:var(--teal-light);margin-right:4px;">${icon}</code>${item.title}</span>`;
+    row.innerHTML = `<span><code style="font-size:0.72rem;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:3px;color:var(--gold-light);margin-right:4px;">${icon}</code>${item.title}</span>`;
     row.appendChild(delBtn);
     list.appendChild(row);
   });
@@ -2706,6 +2941,88 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+// ══════════════════════════════════════════
+// CUSTOM CURSOR — subtle gold dot + trailing ring
+// ══════════════════════════════════════════
+(function() {
+  // টাচ ডিভাইসে কাস্টম কার্সার দরকার নেই — native touch behavior অক্ষত রাখা হলো
+  const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) return;
+
+  document.body.classList.add('has-custom-cursor');
+
+  const dot  = document.createElement('div');
+  dot.className = 'cursor-dot';
+  const ring = document.createElement('div');
+  ring.className = 'cursor-ring';
+  document.body.appendChild(dot);
+  document.body.appendChild(ring);
+
+  let mouseX = 0, mouseY = 0;
+  let ringX  = 0, ringY  = 0;
+  let started = false;
+  const EASE = 0.18; // ring এর lag/glide — কম মান = বেশি delay, বেশি মান = কম delay
+
+  window.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!started) {
+      started = true;
+      ringX = mouseX; ringY = mouseY;
+      dot.style.opacity  = '1';
+      ring.style.opacity = '0.7';
+    }
+  }, { passive: true });
+
+  // Window এর বাইরে গেলে cursor hide করো (e.g. browser tab/address bar এ)
+  document.addEventListener('mouseleave', () => {
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', () => {
+    if (started) { dot.style.opacity = '1'; ring.style.opacity = '0.7'; }
+  });
+
+  function tick() {
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+    ringX += (mouseX - ringX) * EASE;
+    ringY += (mouseY - ringY) * EASE;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // ── Hover states ──
+  // সাধারণ clickable element এ ring scale-up + glow হবে
+  const HOVER_SELECTOR =
+    'a, button, [role="button"], select, label[for], ' +
+    '.pf-card, .pf-card-media, .pf-filter-btn, .pf-card-del, ' +
+    '.nav-toggle, #backToTop, #whatsappBtn';
+  // Text field এ native I-beam cursor দেখানোর জন্য কাস্টম cursor hide হবে
+  const TEXT_SELECTOR = 'input, textarea';
+
+  document.addEventListener('mouseover', e => {
+    const t = e.target;
+    if (t.closest(TEXT_SELECTOR)) {
+      ring.classList.remove('hover');
+      dot.style.opacity  = '0';
+      ring.style.opacity = '0';
+    } else if (t.closest(HOVER_SELECTOR)) {
+      ring.classList.add('hover');
+    }
+  });
+  document.addEventListener('mouseout', e => {
+    const t = e.target;
+    if (t.closest(TEXT_SELECTOR) && started) {
+      dot.style.opacity  = '1';
+      ring.style.opacity = '0.7';
+    }
+    if (t.closest(HOVER_SELECTOR)) {
+      ring.classList.remove('hover');
+    }
+  });
+})();
 
 </script>
 </body>
