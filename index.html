@@ -1495,6 +1495,15 @@
   #pfVideoContainer iframe {
     width: 100%; height: 100%; border: none; display: block;
   }
+  /* এই overlay-টা video iframe (cross-origin document)-এর উপরে বসে থাকে,
+     যাতে আমাদের custom cursor সবসময় track হয় — real cursor iframe-এর
+     ভেতরে ঢুকতে পারে না যতক্ষণ এটা top-এ থাকে। ক্লিক/ড্র্যাগের সময়
+     সংক্ষিপ্ত সময়ের জন্য pointer-events none করে দিয়ে ক্লিক iframe-এ
+     পাস করে দেওয়া হয় (JS দেখুন), তারপর আবার catcher ফিরে আসে। */
+  #pfCursorCatcher {
+    position: absolute; inset: 0; z-index: 5;
+    background: transparent; cursor: none;
+  }
 
 
   /* Custom controls overlay — hidden, Streamable has its own player */
@@ -2126,6 +2135,7 @@
     </div>
     <div id="pfModalPlayer" class="paused">
       <div id="pfVideoContainer" style="position:absolute;inset:0;width:100%;height:100%;"></div>
+      <div id="pfCursorCatcher"></div>
       <div id="pfCustomControls">
         <div id="pfCtrlTop"></div>
         <div id="pfCtrlMiddle">
@@ -3079,6 +3089,24 @@ document.addEventListener('DOMContentLoaded', () => {
     '.nav-toggle, #backToTop, #whatsappBtn';
   // Text field এ native I-beam cursor দেখানোর জন্য কাস্টম cursor hide হবে
   const TEXT_SELECTOR = 'input, textarea';
+
+  // ── Video player এর উপর real cursor আসা বন্ধ ──
+  // #pfCursorCatcher iframe-এর উপরে বসে থাকে বলে আমাদের কাস্টম cursor
+  // সবসময় ট্র্যাক হয়। ক্লিক/ড্র্যাগের সময় সাময়িকভাবে pointer-events
+  // none করে ক্লিকটা নিচের iframe-এ পাস করে দেওয়া হয়, তারপর আবার ফিরে আসে।
+  (function () {
+    const catcher = document.getElementById('pfCursorCatcher');
+    if (!catcher) return;
+    let restoreTimer = null;
+    const passClickThrough = () => {
+      catcher.style.pointerEvents = 'none';
+      clearTimeout(restoreTimer);
+      restoreTimer = setTimeout(() => { catcher.style.pointerEvents = 'auto'; }, 500);
+    };
+    catcher.addEventListener('mousedown', passClickThrough);
+    catcher.addEventListener('touchstart', passClickThrough, { passive: true });
+  })();
+
 
   document.addEventListener('mouseover', e => {
     const t = e.target;
